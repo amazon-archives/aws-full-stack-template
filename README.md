@@ -40,7 +40,6 @@ The goal of the AWS Full-Stack Template is to provide a fully-functional web app
 
 The provided CloudFormation template automates the entire creation and deployment of the AWS Full-Stack Template.  The template includes the following components:
 
-
 **Database components**
 
 * Goals list – Amazon DynamoDB offers fast, predictable performance for the key-value lookups needed in the goals app, and enormous scale so you can build on top of it..  In this implementation, we have unique identifiers for each goal, the goal name, and description.
@@ -55,14 +54,9 @@ The provided CloudFormation template automates the entire creation and deploymen
 * Continuous deployment code pipeline – AWS CodePipeline and AWS CodeBuild help you build, test, and release your application code.
 * Serverless web application – Amazon CloudFront and Amazon S3 provide a globally-distributed application.
 
- 
-
 You can choose to customize the template to create your own goals app, modify it to make a different type of simple notes or to-do application, or add onto it to make a completely different type of web application.  
- 
-
 
 Users can build on top of AWS Full-Stack Template to create any application they envision, whether a travel booking tool, a blog, or another web app. The **AWS Bookstore Demo App** (available at [https://github.com/aws-samples/aws-bookstore-demo-app](https://github.com/aws-samples/aws-bookstore-demo-app)) is just one full-fledged example of what you might create using AWS Full-Stack Template. 
-
 
 &nbsp;
 
@@ -72,7 +66,7 @@ Users can build on top of AWS Full-Stack Template to create any application they
 
 ## Instructions
 
-***IMPORTANT NOTE:** Creating this application in your AWS account will create and consume AWS resources, which **will cost money**.  We estimate that running this demo application will cost <**$0.10/hour** with light usage.  Be sure to shut down/remove all resources once you are finished to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down below).*
+***IMPORTANT NOTE:** Creating this application in your AWS account will create and consume AWS resources, which **will cost money**.  We estimate that running this demo application will cost **<$0.10/hour** with light usage.  Be sure to shut down/remove all resources once you are finished to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down below).*
 
 &nbsp;
 
