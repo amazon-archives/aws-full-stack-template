@@ -169,7 +169,7 @@ BooksTable {
 }
 ```
 
-The table's partition key is the ID attribute of a book. The partition key allows you to look up a book with just the ID. ??Additionally, there is a global secondary index (GSI) on the category attribute. The GSI allows you to run a query on the category attribute and build the books by category experience. ??
+The table's partition key is the ID attribute of a book. The partition key allows you to look up a book with just the ID.
 
 To add on to the application, users might return the results of a search/filter by goal category via ElasticSearch.  
 
