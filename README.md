@@ -47,7 +47,7 @@ The provided CloudFormation template automates the entire creation and deploymen
 **Application components**
 
 * Serverless service backend – Amazon API Gateway powers the interface layer between the frontend and backend, and invokes serverless compute with AWS Lambda.  
-* Web application blueprint – We include a React web application pre-integrated out-of-the-box with best practices and tools such as React Bootstrap, Redux, React Router, internationalization, and more.
+* Web application blueprint – We include a React web application pre-integrated out-of-the-box with best practices and tools such as React Bootstrap, React Router, Typescript, and more.
 
 **Infrastructure components**
 
