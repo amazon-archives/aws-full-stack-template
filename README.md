@@ -153,7 +153,7 @@ The code is hosted in AWS CodeCommit. AWS CodePipeline builds the web applicatio
 
 ### Amazon DynamoDB
 
-The backend of the AWS Full-Stack Template leverages Amazon DynamoDB to enable dynamic scaling and the ability to add features as we improve our goals application. The application create one table in DynamoDB: *Goals.*  DynamoDB's primary key consists of a partition (hash) key and an optional sort (range) key. The primary key (partition and sort key together) must be unique.
+The backend of the AWS Full-Stack Template leverages Amazon DynamoDB to enable dynamic scaling and the ability to add features as we improve our goals application. The application creates one table in DynamoDB: *Goals.*  DynamoDB's primary key consists of a partition (hash) key and an optional sort (range) key. The primary key (partition and sort key together) must be unique.
 
 **Goals Table:**
 
