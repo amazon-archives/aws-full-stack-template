@@ -158,20 +158,16 @@ The backend of the AWS Full-Stack Template leverages Amazon DynamoDB to enable d
 **Goals Table:**
 
 ```js
-BooksTable {
-  id: string (primary partition key)
-  author: string
-  category: string (index, GSI)
-  cover: string (url to s3 file)
-  name: string 
-  price: number
-  rating: number
+GoalsTable {
+  userId: string (primary partition key)
+  goalId: string (primary sort key)
+  title: string
+  content: string
+  createdAt: number
 }
 ```
 
-The table's partition key is the ID attribute of a book. The partition key allows you to look up a book with just the ID.
-
-To add on to the application, users might return the results of a search/filter by goal category via ElasticSearch.  
+The table's primary key is made up of the user ID (partition key) and the goal ID (sort key). This allows a user to view only their own goals, and look up any of their goals through a unique identifier.
 
 &nbsp;
 
