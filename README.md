@@ -341,9 +341,7 @@ Similar to CloudWatch, the capabilities provided by CodeCommit, CodePipeline, an
 
 ## Considerations for demo purposes
 
-1. In order to make the AWS Full-Stack Template an effective demonstration from the moment it is created, the CloudFormation template kicks off a Lambda function we wrote to pre-load a list of books into the product catalog (the *Goals* table in DynamoDB).  This enables you to sign up as a new user and immediately see what the running store would look like, including recommendations based on what friends have purchased and what the best-selling books section does.  
-
-2. Web assets (pages, images, etc.) are pulled from a public S3 bucket via the CloudFormation template to create the frontend for the AWS Full-Stack Template.  When building your own web application (or customizing this one), you will likely pull from your own S3 buckets.  If you customize the lambda functions, you will want to store these separately, as well.
+1. Web assets (pages, images, etc.) are pulled from a public S3 bucket via the CloudFormation template to create the frontend for the AWS Full-Stack Template.  When building your own web application (or customizing this one), you will likely pull from your own S3 buckets.  If you customize the lambda functions, you will want to store these separately, as well.
 
 &nbsp;
 
