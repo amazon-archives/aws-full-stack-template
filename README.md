@@ -179,7 +179,7 @@ Amazon API Gateway acts as the interface layer between the frontend (Amazon Clou
 
 GET /goals (ListGoals)  
 POST /goals (CreateGoal)  
-GET /goals/{:id} (GetGoal)
+GET /goals/{:id} (GetGoal)  
 PUT /goals/{:id} (UpdateGoal)  
 DELETE /goals/{:id} (DeleteGoal)  
 
@@ -192,7 +192,7 @@ AWS Lambda is used in a few different places to run the application, as shown in
 &nbsp;
 
 **ListGoals**
-Lambda function that lists the user's goals.
+Lambda function that lists the user's goals. The user's account ID is retrieved through the request context (does not need to be explicity provided in the request).
 
 ```js
 ListGoalsRequest {
@@ -222,7 +222,7 @@ Lambda function that returns the properties of a goal.
 
 ```js
 GetGoalRequest {
-  goalId: string
+    goalId: string
 }
 ```
 
