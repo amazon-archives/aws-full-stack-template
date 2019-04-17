@@ -1,0 +1,1110 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  ProjectName:
+    Description: Name of the project (lowercase and under twelve characters)
+    Type: String
+    AllowedPattern: '^[a-z]{0,12}$'
+    ConstraintDescription: Must be lowercase and under twelve characters
+  AssetsBucketName:
+    Type: String
+    Description: 'Name of assets S3 bucket to create (lowercase, numbers or - only)'
+    AllowedPattern: '^[a-z0-9-]{3,63}$'
+    ConstraintDescription: 'Must be between 3 and 63 characters (lowercase, numbers or -)'
+  SeedRepository:
+    Type: String
+    Default: 'https://s3.amazonaws.com/aws-fullstack-template/goals-webapp.zip'
+Conditions:
+  IADRegion: !Equals [!Ref "AWS::Region", "us-east-1"]
+Mappings:
+  S3Buckets:
+    us-east-1:
+      Bucket: aws-fullstack-template
+      SeederFunctionBucket: fsd-aws-wildrydes-us-east-1
+    us-west-2:
+      Bucket: aws-fullstack-template-us-west-2
+      SeederFunctionBucket: fsd-aws-wildrydes-us-west-2
+    eu-central-1:
+      Bucket: aws-fullstack-template-eu-central-1
+      SeederFunctionBucket: fsd-aws-wildrydes-eu-central-1
+    eu-west-1:
+      Bucket: aws-fullstack-template-eu-west-1
+      SeederFunctionBucket: fsd-aws-wildrydes-eu-west-1
+
+  Constants:
+    S3Keys:
+      ListGoalsCode: functions/ListGoals.zip
+      CreateGoalCode: functions/CreateGoal.zip
+      DeleteGoalCode: functions/DeleteGoal.zip
+      UpdateGoalCode: functions/UpdateGoal.zip
+      GetGoalCode: functions/GetGoal.zip
+      UpdateConfigCode: functions/UpdateConfig.zip
+      SeederFunctionCode: aws-serverless-codecommit-seeder.zip
+Resources:
+  DynamoDbRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${ProjectName}-DynamoDbLambda'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: GoalsPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'dynamodb:PutItem'
+                  - 'dynamodb:Query'
+                  - 'dynamodb:UpdateItem'
+                  - 'dynamodb:GetItem'
+                  - 'dynamodb:Scan'
+                  - 'dynamodb:DeleteItem'
+                Resource: !GetAtt TGoals.Arn
+
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 07b29683-0ea5-44bf-a439-fcb89713fd09
+  TGoals:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: !Sub '${ProjectName}-Goals'
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: goalId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: goalId
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 9de25578-c943-42f5-9ec7-7a5258c7771a
+  FunctionListGoals:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-ListGoals'
+      Description: Get list of goals for userId
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs6.10
+      Role: !GetAtt 
+        - DynamoDbRole
+        - Arn
+      Timeout: 120
+      Environment:
+        Variables:
+          TABLE_NAME: !Sub '${ProjectName}-Goals'
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - ListGoalsCode
+  FunctionCreateGoal:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-CreateGoal'
+      Description: Create goal for user id
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs6.10
+      Role: !GetAtt 
+        - DynamoDbRole
+        - Arn
+      Timeout: 120
+      Environment:
+        Variables:
+          TABLE_NAME: !Sub '${ProjectName}-Goals'
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - CreateGoalCode
+  FunctionDeleteGoal:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-DeleteGoal'
+      Description: Delete goal for user id
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs6.10
+      Role: !GetAtt 
+        - DynamoDbRole
+        - Arn
+      Timeout: 120
+      Environment:
+        Variables:
+          TABLE_NAME: !Sub '${ProjectName}-Goals'
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - DeleteGoalCode
+  FunctionUpdateGoal:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-UpdateGoal'
+      Description: Update goal for user id
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs6.10
+      Role: !GetAtt 
+        - DynamoDbRole
+        - Arn
+      Timeout: 120
+      Environment:
+        Variables:
+          TABLE_NAME: !Sub '${ProjectName}-Goals'
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - UpdateGoalCode
+  FunctionGetGoal:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-GetGoal'
+      Description: Get goal for user id
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs6.10
+      Role: !GetAtt 
+        - DynamoDbRole
+        - Arn
+      Timeout: 120
+      Environment:
+        Variables:
+          TABLE_NAME: !Sub '${ProjectName}-Goals'
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - GetGoalCode
+  FunctionListGoalsPermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref FunctionListGoals
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join 
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref AppApi
+          - /*
+  FunctionCreateGoalPermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref FunctionCreateGoal
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join 
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref AppApi
+          - /*
+  FunctionDeleteGoalPermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref FunctionDeleteGoal
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join 
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref AppApi
+          - /*
+  FunctionUpdateGoalPermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref FunctionUpdateGoal
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join 
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref AppApi
+          - /*
+  FunctionGetGoalPermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref FunctionGetGoal
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join 
+        - ''
+        - - 'arn:aws:execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref AppApi
+          - /*
+  AppApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: !Sub '${ProjectName}-Goals'
+      Description: API used for Goals requests
+      FailOnWarnings: true
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3e7a32d4-9e4d-4ecc-89b2-77203c5d926b
+  GoalsApiRequestGET:
+    DependsOn:
+      - FunctionListGoalsPermissions
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: AWS_IAM
+      HttpMethod: GET
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join 
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - ':lambda:path/2015-03-31/functions/'
+            - !GetAtt 
+              - FunctionListGoals
+              - Arn
+            - /invocations
+        IntegrationResponses:
+          - StatusCode: 200
+      ResourceId: !Ref GoalsApiResource
+      RestApiId: !Ref AppApi
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: Empty
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 5a740957-6b64-4ddd-bd1d-3027df7fc6d5
+  GoalsApiRequestOPTIONS:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      ResourceId: !Ref GoalsApiResource
+      RestApiId: !Ref AppApi
+      AuthorizationType: None
+      HttpMethod: OPTIONS
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: >-
+                'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+              method.response.header.Access-Control-Allow-Methods: '''GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH'''
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: ''
+            StatusCode: '200'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+        - ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: '200'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: f0f16a94-104a-431f-8c87-930f56274955
+  GoalsApiRequestPOST:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: AWS_IAM
+      HttpMethod: POST
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join 
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - ':lambda:path/2015-03-31/functions/'
+            - !GetAtt 
+              - FunctionCreateGoal
+              - Arn
+            - /invocations
+        IntegrationResponses:
+          - StatusCode: 200
+      ResourceId: !Ref GoalsApiResource
+      RestApiId: !Ref AppApi
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: Empty
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 454289ef-fb5c-4a1f-941d-4016ebc9cf24
+  GoalItemApiRequestGET:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: AWS_IAM
+      HttpMethod: GET
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join 
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - ':lambda:path/2015-03-31/functions/'
+            - !GetAtt 
+              - FunctionGetGoal
+              - Arn
+            - /invocations
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseTemplates:
+              application/json: $input.json('$.body')
+      RequestParameters:
+        method.request.path.id: true
+      ResourceId: !Ref GoalItemApiResource
+      RestApiId: !Ref AppApi
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: Empty
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: a311ee38-d902-4856-9f09-1d00d1bc8600
+  GoalItemApiRequestOPTIONS:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      ResourceId: !Ref GoalItemApiResource
+      RestApiId: !Ref AppApi
+      AuthorizationType: None
+      HttpMethod: OPTIONS
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: >-
+                'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+              method.response.header.Access-Control-Allow-Methods: '''GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH'''
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: ''
+            StatusCode: '200'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+        - ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: '200'
+  GoalItemApiRequestPUT:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: AWS_IAM
+      HttpMethod: PUT
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join 
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - ':lambda:path/2015-03-31/functions/'
+            - !GetAtt 
+              - FunctionUpdateGoal
+              - Arn
+            - /invocations
+        IntegrationResponses:
+          - StatusCode: 200
+      RequestParameters:
+        method.request.path.id: true
+      ResourceId: !Ref GoalItemApiResource
+      RestApiId: !Ref AppApi
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: Empty
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 454289ef-fb5c-4a1f-941d-4016ebc9cs24
+  GoalItemApiRequestDELETE:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: AWS_IAM
+      HttpMethod: DELETE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join 
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - ':lambda:path/2015-03-31/functions/'
+            - !GetAtt 
+              - FunctionDeleteGoal
+              - Arn
+            - /invocations
+        IntegrationResponses:
+          - StatusCode: 200
+      RequestParameters:
+        method.request.path.id: true
+      ResourceId: !Ref GoalItemApiResource
+      RestApiId: !Ref AppApi
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: Empty
+  GoalsApiResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref AppApi
+      ParentId: !GetAtt 
+        - AppApi
+        - RootResourceId
+      PathPart: goals
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e0ffbcc7-5f62-43ac-b377-47ec80a5a71e
+  GoalItemApiResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref AppApi
+      ParentId: !Ref GoalsApiResource
+      PathPart: '{id}'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 25b4ecc5-9d47-49cb-b5c4-d03574eee62e
+  ApiAuthorizer:
+    Type: 'AWS::ApiGateway::Authorizer'
+    Properties:
+      AuthorizerResultTtlInSeconds: 300
+      IdentitySource: method.request.header.Authorization
+      Name: CognitoDefaultUserPoolAuthorizer
+      ProviderARNs:
+        - !GetAtt 
+          - UserPool
+          - Arn
+      RestApiId: !Ref AppApi
+      Type: COGNITO_USER_POOLS
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 03db03b0-3367-4eb8-bfa1-82df7efc4df4
+  APIDeployment:
+    DependsOn:
+      - GoalsApiRequestGET
+      - GoalsApiRequestOPTIONS
+      - GoalsApiRequestPOST
+      - GoalItemApiRequestGET
+      - GoalItemApiRequestPUT
+      - GoalItemApiRequestDELETE
+      - GoalItemApiRequestOPTIONS
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      Description: Prod deployment for API
+      RestApiId: !Ref AppApi
+      StageName: prod
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 278dda65-02c9-49fa-a19c-3dd7afd25683
+  SNSRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cognito-idp.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: CognitoSNSPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'sns:publish'
+                Resource: '*'
+  UserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      UserPoolName: !Sub '${ProjectName}-user-pool'
+      UsernameAttributes:
+        - email
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+        InviteMessageTemplate:
+          EmailMessage: 'Your username is {username} and temporary password is {####}. '
+          EmailSubject: Your temporary password
+          SMSMessage: 'Your username is {username} and temporary password is {####}.'
+        UnusedAccountValidityDays: 7
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: false
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: false
+      AutoVerifiedAttributes:
+        - email
+      EmailVerificationMessage: 'Here is your verification code: {####}'
+      EmailVerificationSubject: Your verification code
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+  UserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      ClientName: !Sub '${ProjectName}-client'
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
+  IdentityPool:
+    Type: 'AWS::Cognito::IdentityPool'
+    Properties:
+      IdentityPoolName: !Sub '${ProjectName}Identity'
+      AllowUnauthenticatedIdentities: true
+      CognitoIdentityProviders:
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !GetAtt 
+            - UserPool
+            - ProviderName
+  CognitoUnAuthorizedRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action:
+              - 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud': !Ref IdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': unauthenticated
+      Policies:
+        - PolicyName: CognitoUnauthorizedPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'mobileanalytics:PutEvents'
+                  - 'cognito-sync:*'
+                Resource: '*'
+  CognitoAuthorizedRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action:
+              - 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud': !Ref IdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': authenticated
+      Policies:
+        - PolicyName: CognitoAuthorizedPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'mobileanalytics:PutEvents'
+                  - 'cognito-sync:*'
+                  - 'cognito-identity:*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'execute-api:Invoke'
+                Resource: !Join 
+                  - ''
+                  - - 'arn:aws:execute-api:'
+                    - !Ref 'AWS::Region'
+                    - ':'
+                    - !Ref 'AWS::AccountId'
+                    - ':'
+                    - !Ref AppApi
+                    - /*
+  IdentityPoolRoleMapping:
+    Type: 'AWS::Cognito::IdentityPoolRoleAttachment'
+    Properties:
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+        authenticated: !GetAtt 
+          - CognitoAuthorizedRole
+          - Arn
+        unauthenticated: !GetAtt 
+          - CognitoUnAuthorizedRole
+          - Arn
+  AssetsCodeRepository:
+    Type: 'AWS::CodeCommit::Repository'
+    Properties:
+      RepositoryDescription: Code repository for web application
+      RepositoryName: !Sub '${ProjectName}-WebAssets'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: a2e798f0-374b-4297-b68f-ce7766170a6d
+  AssetsBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref AssetsBucketName
+      AccessControl: Private
+      MetricsConfigurations:
+        - Id: EntireBucket
+      WebsiteConfiguration:
+        IndexDocument: index.html
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: a141b7c9-9999-40e3-8702-f1cf283573ef
+  AssetsBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref AssetsBucketName
+      PolicyDocument:
+        Statement:
+          - Action: 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub 'arn:aws:s3:::${AssetsBucketName}/*'
+            Principal:
+              AWS: !Sub >-
+                arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity
+                ${AssetsBucketOriginAccessIdentity}
+    DependsOn:
+      - AssetsBucketOriginAccessIdentity
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c177c7a0-df73-4587-90aa-de6b7c3a53b2
+  AssetsBucketOriginAccessIdentity:
+    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub 'OriginAccessIdentity for ${AssetsBucketName}'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: f391801b-d255-40b5-be40-725ad2e93a22
+  AssetsCDN:
+    Type: 'AWS::CloudFront::Distribution'
+    DependsOn:
+      - AssetsBucketOriginAccessIdentity
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub 'CDN for ${AssetsBucketName}'
+        DefaultRootObject: index.html
+        Origins:
+          - DomainName: !Join
+              - ''
+              - - !Sub '${AssetsBucketName}.s3'
+                - !If [IADRegion, '', !Sub '-${AWS::Region}']
+                - '.amazonaws.com'
+            Id: S3
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub >-
+                origin-access-identity/cloudfront/${AssetsBucketOriginAccessIdentity}
+        DefaultCacheBehavior:
+          TargetOriginId: S3
+          ViewerProtocolPolicy: https-only
+          ForwardedValues:
+            QueryString: 'false'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 16b95097-f526-4bf7-b997-ce2f6187ef4d
+  CodeBuildRole:
+    Description: Creating service role in IAM for AWS CodeBuild
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${ProjectName}-codebuild-role'
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: codebuild-policy
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                  - 's3:GetObjectVersion'
+                  - 's3:GetBucketVersioning'
+                Resource:
+                  - !Join 
+                    - ''
+                    - - !GetAtt AssetsBucket.Arn
+                      - /*
+                  - !Join 
+                    - ''
+                    - - !GetAtt PipelineArtifactsBucket.Arn
+                      - /*
+                Effect: Allow
+        - PolicyName: codebuild-logs
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'logs:CreateLogGroup'
+                  - 'cloudfront:CreateInvalidation'
+                Resource: '*'
+                Effect: Allow
+      Path: /
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3aa76bbe-43cb-455a-9e85-48663b8ba66e
+  CodePipelineRole:
+    Description: Creating service role in IAM for AWS CodePipeline
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${ProjectName}-CodePipeline-Role'
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: codecommit-for-codepipeline
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - 'codecommit:GetBranch'
+                  - 'codecommit:GetCommit'
+                  - 'codecommit:UploadArchive'
+                  - 'codecommit:GetUploadArchiveStatus'
+                  - 'codecommit:CancelUploadArchive'
+                Resource: !GetAtt AssetsCodeRepository.Arn
+                Effect: Allow
+        - PolicyName: artifacts-for-pipeline
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                Resource:
+                  'Fn::Join':
+                    - ''
+                    - - 'Fn::GetAtt':
+                          - PipelineArtifactsBucket
+                          - Arn
+                      - /*
+                Effect: Allow
+        - PolicyName: codebuild-for-pipeline
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - 'codebuild:BatchGetBuilds'
+                  - 'codebuild:StartBuild'
+                Resource: !GetAtt 
+                  - CodeBuildProject
+                  - Arn
+                Effect: Allow
+      Path: /
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c7b2d059-8720-4407-a75f-9b5f50c503d1
+  PipelineArtifactsBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub '${ProjectName}-assets-pipeline-artifacts'
+      AccessControl: Private
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: bbbc886f-d307-45dc-a6e3-63353f40a4f4
+  CodeBuildProject:
+    DependsOn:
+      - PipelineArtifactsBucket
+    Description: Creating AWS CodeBuild project
+    Type: 'AWS::CodeBuild::Project'
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Description: !Sub 'Building stage for ${ProjectName}.'
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+          - Name: S3_BUCKET
+            Value: !Ref PipelineArtifactsBucket
+        Image: 'aws/codebuild/nodejs:7.0.0'
+        Type: LINUX_CONTAINER
+      Name: !Sub '${ProjectName}-build'
+      ServiceRole: !Ref CodeBuildRole
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: !Sub |
+          version: 0.1
+          phases:
+            pre_build:
+              commands:
+                - echo Installing NPM dependencies...
+                - npm install
+            build:
+              commands:
+                - npm run build
+            post_build:
+              commands:
+                - echo Uploading to AssetsBucket 
+                - aws s3 cp --recursive ./build s3://${AssetsBucketName}/ 
+                - aws s3 cp --cache-control="max-age=0, no-cache, no-store, must-revalidate" ./build/service-worker.js s3://${AssetsBucket}/
+                - aws s3 cp --cache-control="max-age=0, no-cache, no-store, must-revalidate" ./build/index.html s3://${AssetsBucket}/
+                - aws cloudfront create-invalidation --distribution-id ${AssetsCDN} --paths /index.html /service-worker.js
+
+          artifacts:
+            files:
+              - '**/*'
+            base-directory: build        
+      Tags:
+        - Key: app-name
+          Value: !Ref ProjectName
+      TimeoutInMinutes: 5
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: a83e893f-d993-4a92-9c51-b00425960a96
+  AssetsCodePipeline:
+    Type: 'AWS::CodePipeline::Pipeline'
+    Properties:
+      Name: !Sub '${ProjectName}-Assets-Pipeline'
+      RoleArn: !GetAtt 
+        - CodePipelineRole
+        - Arn
+      ArtifactStore:
+        Location: !Sub '${ProjectName}-assets-pipeline-artifacts'
+        Type: S3
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: Source
+              InputArtifacts: []
+              ActionTypeId:
+                Version: '1'
+                Category: Source
+                Owner: AWS
+                Provider: CodeCommit
+              Configuration:
+                BranchName: master
+                RepositoryName: !Sub '${ProjectName}-WebAssets'
+              OutputArtifacts:
+                - Name: !Sub '${ProjectName}-SourceArtifact'
+        - Name: Build
+          Actions:
+            - Name: build-and-deploy
+              InputArtifacts:
+                - Name: !Sub '${ProjectName}-SourceArtifact'
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: '1'
+                Provider: CodeBuild
+              OutputArtifacts:
+                - Name: !Sub '${ProjectName}-BuildArtifact'
+              Configuration:
+                ProjectName: !Sub '${ProjectName}-build'
+              RunOrder: 1
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: bd7060e4-3e26-442c-9c4e-141ca61a9590
+    DependsOn:
+      - PipelineArtifactsBucket
+  SeederFunction:
+    Properties:
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - SeederFunctionBucket
+        S3Key: !FindInMap 
+         - Constants
+         - S3Keys
+         - SeederFunctionCode
+      Description: CodeCommit repository seeder
+      Handler: seeder.SeedRepositoryHandler
+      MemorySize: 3008
+      Role:
+        'Fn::GetAtt':
+          - SeederRole
+          - Arn
+      Runtime: java8
+      Timeout: 900
+    Type: 'AWS::Lambda::Function'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 6b5081a3-db00-41db-a607-c9d5f98cf394
+    DependsOn:
+      - AssetsCodeRepository
+  UpdateConfigFunction:
+    Properties:
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - UpdateConfigCode
+      Description: Update config for CodeCommit repository
+      Handler: index.handler
+      Role:
+        'Fn::GetAtt':
+          - SeederRole
+          - Arn
+      Runtime: nodejs8.10
+      Timeout: 300
+      Environment:
+        Variables:
+          API_URL: !Sub 'https://${AppApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+          BRANCH_NAME: master
+          REGION: !Ref 'AWS::Region'
+          REPOSITORY_NAME: !Sub '${ProjectName}-WebAssets'
+          USER_POOL_ID: !Ref UserPool
+          APP_CLIENT_ID: !Ref UserPoolClient
+          IDENTITY_POOL_ID: !Ref IdentityPool
+    Type: 'AWS::Lambda::Function'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 00cdcc4b-3885-4a51-bdad-776ac697419c
+    DependsOn:
+      - AssetsCodeRepository
+      - SeederFunction
+      - RepositorySeeder
+      - AppApi
+      - UserPool
+      - UserPoolClient
+      - IdentityPool
+  SeederRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - 'codecommit:GetRepository'
+                  - 'codecommit:GitPush'
+                  - 'codecommit:GetBranch'
+                  - 'codecommit:PutFile'
+                Effect: Allow
+                Resource: !GetAtt AssetsCodeRepository.Arn
+            Version: 2012-10-17
+          PolicyName: SeederRolePolicy
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - 'logs:*'
+                Effect: Allow
+                Resource: 'arn:aws:logs:*:*:*'
+            Version: 2012-10-17
+          PolicyName: LogsPolicy
+    Type: 'AWS::IAM::Role'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: a10d77af-fa97-40ee-a6f0-5d9988792aeb
+  RepositorySeeder:
+    Properties:
+      ServiceToken:
+        'Fn::GetAtt':
+          - SeederFunction
+          - Arn
+      sourceUrl: !Ref SeedRepository
+      targetRepositoryName: !Sub '${ProjectName}-WebAssets'
+      targetRepositoryRegion: '${AWS::Region}'
+    Type: 'Custom::RepositorySeeder'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 688ea29a-9fa9-40c9-b5a8-85e863cc8a4c
+  RepositoryUpdater:
+    Type: 'Custom::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt UpdateConfigFunction.Arn
+      ParameterOne: Parameter to pass into Custom Lambda Function
+      DependsOn: UpdateConfigFunction
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 63b08124-fccb-4874-ab13-ce6cfe6ce885
+Outputs:
+  CodeRepository:
+    Description: Code repository for the web application.
+    Export:
+      Name: !Sub '${ProjectName}CodeRepository'
+    Value: !GetAtt AssetsCodeRepository.Name
+  WebApplication:
+    Description: The URL for the web application
+    Export:
+      Name: !Sub '${ProjectName}WebApp'
+    Value: !Sub 
+      - 'https://${Domain}'
+      - Domain: !GetAtt AssetsCDN.DomainName
