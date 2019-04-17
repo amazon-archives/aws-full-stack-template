@@ -155,7 +155,7 @@ The code is hosted in AWS CodeCommit. AWS CodePipeline builds the web applicatio
 
 The backend of the AWS Full-Stack Template leverages Amazon DynamoDB to enable dynamic scaling and the ability to add features as we improve our goals application. The application creates one table in DynamoDB: *Goals.*  DynamoDB's primary key consists of a partition (hash) key and an optional sort (range) key. The primary key (partition and sort key together) must be unique.
 
-**Goals Table:**
+**Goals Table**
 
 ```js
 GoalsTable {
@@ -192,6 +192,7 @@ AWS Lambda is used in a few different places to run the application, as shown in
 &nbsp;
 
 **ListGoals**
+
 Lambda function that lists the user's goals. The user's account ID is retrieved through the request context (does not need to be explicity provided in the request).
 
 ```js
@@ -218,6 +219,7 @@ goal {
 &nbsp;
 
 **GetGoal**
+
 Lambda function that returns the properties of a goal.
 
 ```js
@@ -238,6 +240,7 @@ GetGoalResponse {
 &nbsp;
 
 **CreateGoal**
+
 Lambda function that creates a specified goal in the user's account.
 
 ```js
@@ -256,6 +259,7 @@ CreateGoalResponse {
 &nbsp;
 
 **DeleteGoal**
+
 Lambda function that removes a given goal from the user's account.  
 
 ```js
@@ -273,6 +277,7 @@ DeleteGoalResponse {
 &nbsp;
 
 **UpdateGoal**
+
 Lambda function that updates the user's goal with a new title and/or content.
 
 ```js
@@ -293,16 +298,19 @@ UpdateGoalResponse {
 
 ### AWS IAM
 
-The following IAM role is needed to run the application:
+The following IAM role (and included policies) is needed to run the application:
 
 **DynamoDbLambda**  
+*AWS managed policy*  
 AWSLambdaBasicExecutionRole  
-dynamodb:PutItem - table/Goals  
-dynamodb:Query - table/Goals  
-dynamodb:UpdateItem - table/Goals  
-dynamodb:GetItem - table/Goals  
-dynamodb:Scan - table/Goals  
-dynamodb:DeleteItem - table/Goals
+*Inline policy*  
+GoalsPolicy  
+&nbsp;&nbsp;&nbsp;&nbsp;dynamodb:PutItem - table/Goals  
+&nbsp;&nbsp;&nbsp;&nbsp;dynamodb:Query - table/Goals  
+&nbsp;&nbsp;&nbsp;&nbsp;dynamodb:UpdateItem - table/Goals  
+&nbsp;&nbsp;&nbsp;&nbsp;dynamodb:GetItem - table/Goals  
+&nbsp;&nbsp;&nbsp;&nbsp;dynamodb:Scan - table/Goals  
+&nbsp;&nbsp;&nbsp;&nbsp;dynamodb:DeleteItem - table/Goals
 
 &nbsp;
 
@@ -352,7 +360,7 @@ Similar to CloudWatch, the capabilities provided by CodeCommit, CodePipeline, an
 ## Known limitations
 
 * The application was written for demonstration purposes and not for production use.
-* Upon the first use of a Lambda function, cold start times can be slow. Once the Lambda function has been warmed up, performance will improve.  See [Considerations for demo purposes](#considerations-for-demo-purposes) for more information.
+* Upon the first use of a Lambda function, cold start times can be slow. Once the Lambda function has been warmed up, performance will improve.  
 
 &nbsp;
 
