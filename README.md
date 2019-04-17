@@ -293,37 +293,16 @@ UpdateGoalResponse {
 
 ### AWS IAM
 
-The following IAM roles are needed to run the application:
+The following IAM role is needed to run the application:
 
-**ListBooksLambda**
+**DynamoDbLambda**
 AWSLambdaBasicExecutionRole  
-dynamodb:Scan - table/Books/index/category-index  
-dynamodb:Query - table/Books
-
-**GetBookLambda**
-AWSLambdaBasicExecutionRole  
-dynamodb:GetItem - table/Books
-
-**ListItemsInCartLambda**
-AWSLambdaBasicExecutionRole  
-dynamodb:Query - table/Cart
-
-**AddToCartLambda**
-AWSLambdaBasicExecutionRole  
-dynamodb:PutItem - table/Cart
-
-**UpdateCartLambda**
-AWSLambdaBasicExecutionRole  
-dynamodb:UpdateItem - table/Cart
-
-**ListOrdersLambda**
-AWSLambdaBasicExecutionRole  
-dynamodb:Query - table/Orders
-
-**CheckoutLambda**
-AWSLambdaBasicExecutionRole  
-dynamodb:PutItem - table/Orders  
-dynamoDB:DeleteItem - table/Cart
+dynamodb:PutItem - table/Goals  
+dynamodb:Query - table/Goals  
+dynamodb:UpdateItem - table/Goals  
+dynamodb:GetItem - table/Goals  
+dynamodb:Scan - table/Goals  
+dynamodb:DeleteItem - table/Goals
 
 &nbsp;
 
