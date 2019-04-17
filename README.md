@@ -355,7 +355,6 @@ Similar to CloudWatch, the capabilities provided by CodeCommit, CodePipeline, an
 
 * The application was written for demonstration purposes and not for production use.
 * Upon the first use of a Lambda function, cold start times can be slow. Once the Lambda function has been warmed up, performance will improve.  See [Considerations for demo purposes](#considerations-for-demo-purposes) for more information.
-* The application is not currently designed for for high availability. You can increase the availability of the application by configuring ??XYZ?? with multiple instances across multiple AZs.
 
 &nbsp;
 
