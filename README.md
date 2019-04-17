@@ -177,11 +177,11 @@ Amazon API Gateway acts as the interface layer between the frontend (Amazon Clou
 
 **Goals (DynamoDB)**
 
-GET /cart (ListItemsInCart)  
-POST /cart (AddToCart)  
-PUT /cart (UpdateCart)  
-DELETE /cart (RemoveFromCart)  
-GET /cart/{:bookId} (GetCartItem)
+GET /goals (ListGoals)  
+POST /goals (CreateGoal)  
+GET /goals/{:id} (GetGoal)
+PUT /goals/{:id} (UpdateGoal)  
+DELETE /goals/{:id} (DeleteGoal)  
 
 &nbsp;
 
@@ -191,108 +191,99 @@ AWS Lambda is used in a few different places to run the application, as shown in
 
 &nbsp;
 
-**ListBooks**
-Lambda function that lists the books in the specified product category
+**ListGoals**
+Lambda function that lists the user's goals.
 
 ```js
-ListBooksRequest {
-    category?: string (optional parameter)  
+ListGoalsRequest {
+
 }
 ```
 
 ```js
-ListBooksResponse {
-    books: book[]
+ListGoalsResponse {
+    goals: goal[]
 }
 ```
 
 ```js
-book {
-    id: string
-    category: string
-    name: string 
-    author: string
-    description: string
-    rating: number
-    price: number
-    cover: string
+goal {
+    goalId: string
+    title: string
+    content: string
+    createdAt: number
 }
 ```
 
 &nbsp;
 
-**GetBook**
-Lambda function that will return the properties of a book.
+**GetGoal**
+Lambda function that returns the properties of a goal.
 
 ```js
-GetBookRequest {
-  bookId: string
+GetGoalRequest {
+  goalId: string
 }
 ```
 
 ```js
-GetBookResponse {
-    id: string
-    category: string
-    name: string 
-    author: string
-    description: string
-    rating: number
-    price: number
-    cover: string
+GetGoalResponse {
+    goalId: string
+    title: string
+    content: string
+    createdAt: number
 }
 ```
 
 &nbsp;
 
-**AddToCart**
-Lambda function that adds a specified book to the user's cart.  Price is included in this function's request so that the price is passed into the cart table in DynamoDB.  This could reflect that the price in the cart may be different than the price in the catalog (i.e. books table) perhaps due to discounts or coupons.
+**CreateGoal**
+Lambda function that creates a specified goal in the user's account.
 
 ```js
-AddToCartRequest {
-    bookId: string
-    quantity: number
-    price: number
+CreateGoalRequest {
+    title: string
+    content: string
 }
 ```
 
 ```js
-AddToCartResponse {
+CreateGoalResponse {
 
 }
 ```
 
 &nbsp;
 
-**RemoveFromCart**
-Lambda function that removes a given book from the user's cart.  
+**DeleteGoal**
+Lambda function that removes a given goal from the user's account.  
 
 ```js
-RemoveFromCartRequest {
-    bookId: string
+DeleteGoalRequest {
+    goalId: string
 }
 ```
 
 ```js
-RemoveFromCartResponse {
+DeleteGoalResponse {
 
 }
 ```
 
 &nbsp;
 
-**UpdateCart**
-Lambda function that updates the user's cart with a new quantity of a given book.
+**UpdateGoal**
+Lambda function that updates the user's goal with a new title and/or content.
 
 ```js
-UpdateCartRequest {
-    bookId: string
-    quantity: number
+UpdateGoalRequest {
+    title: string
+    content: string
 }
 ```
 
 ```js
-UpdateCartResponse {
+UpdateGoalResponse {
     
 }
 ```
