@@ -295,7 +295,7 @@ UpdateGoalResponse {
 
 The following IAM role is needed to run the application:
 
-**DynamoDbLambda**
+**DynamoDbLambda**  
 AWSLambdaBasicExecutionRole  
 dynamodb:PutItem - table/Goals  
 dynamodb:Query - table/Goals  
