@@ -267,8 +267,6 @@ to:
 ```
 where "title of your goal" is the goal title you made a note of earlier (or perhaps one word of your goal title).  This is simulating the string that you might put into a search bar.
 
-Further down in the window, find "cognitoIdentityId" and replace "null" with the userID you retrieved from DynamoDB (be sure to put the userID in quotation marks, e.g. "us-west-2:53f2a47c-e52d-47ff-b718-86118725c47b").  This ensures the goals that are returned are only those owned by that user.  
-
 Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.
 
 #### Step 3: Add a search bar to the goals app *(optional)*
