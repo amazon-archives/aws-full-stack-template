@@ -240,17 +240,40 @@ You finished Part 2 of the workshop! If you do not plan to immediately continue 
 
 In this section, you will start with the application you deployed in **Part 1** with AWS Full-Stack Template and deploy an extension (via CloudFormation) to add onto the application.  The purpose of this section is to illustrate how you can take a basic application like the Goals app and turn it into something different by adding components.
 
-#### Step 1: Deploy the extension in your AWS account
+#### Step 1: Deploy the search extension in your AWS account
 
-Following the same guidelines for CloudFormation as in Parts 1 and 2 of this workshop, create a new stack, and use the template provided in the **Extensions** folder in the GitHub repo for AWS Full-Stack Template.  Deploy the extension.
+Following the same guidelines for CloudFormation as in Part 1 and Part 2 of this workshop, create a new stack, and use the template provided in the **Extensions** folder in the GitHub repo for AWS Full-Stack Template to add search capabilities to the Goals app via Elasticsearch service.  Deploy the extension.
 
 #### Step 2: Play with the search capability
 
-Now that you've deployed the search extension, try a few sample searches to see if your goals are returned.  
+Now that you've deployed the search extension, let's test it to make sure search results are being returned properly. 
 
-Enter info on how to test search with Lambda
+Open the DynamoDB console and find the table associated with your goals.  Go to the items tab and choose one of the items (a goal).  Copy the userID and the title of the goal and make a note of them for use in a minute.  
 
-If you would like, you can go even further by integrating the search functionality into the frontend website.
+In a new tab, open the Lambda console and look for the search function that was created as part of the extension you just ran in CloudFormation.  It should be titled "yourextensionprojectname-Search."  Open the Lambda function, choose the "Select a test event" dropdown towards the top, and choose "Configure test events."  In the "Event template" dropdown, choose "Amazon API Gateway AWS Proxy."  Here we are setting up a test for our search extension.
+
+Next, enter an event name (e.g. searchtest) and change the following lines of code from:
+
+```js
+"queryStringParameters": {
+    "foo": bar
+  },
+```
+to:
+```js
+"queryStringParameters": {
+    "q": title of your goal
+  },
+```
+where "title of your goal" is the goal title you made a note of earlier (or perhaps one word of your goal title).  This is simulating the string that you might put into a search bar.
+
+Further down in the window, find "cognitoIdentityId" and replace "null" with the userID you retrieved from DynamoDB (be sure to put the userID in quotation marks, e.g. "us-west-2:53f2a47c-e52d-47ff-b718-86118725c47b").  This ensures the goals that are returned are only those owned by that user.  
+
+Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.
+
+#### Step 3: Add a search bar to the goals app *(optional)*
+
+If you would like, you can go even further by integrating the search functionality into the frontend application.  Feel free to explore how AWS Bookstore Demo App did this, or experiment!
 
 
 ### Section 2: Build your own extension! *(optional)*
