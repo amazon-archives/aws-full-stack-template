@@ -360,6 +360,7 @@ Similar to CloudWatch, the capabilities provided by CodeCommit, CodePipeline, an
 ## Known limitations
 
 * The application was written for demonstration purposes and not for production use.
+* Validation is working properly from an end-user standpoint, but is not cleanly implemented. For instance, the submit buttons (to create a goal, update a goal, login, signup, and enter confirmation code) are disabled (as designed) when validation fails, but we added an extra helper function to support this.  This issue occured when the app was upgraded to Bootstrap 4.  We plan to fix this in a future revision.
 * Upon the first use of a Lambda function, cold start times can be slow. Once the Lambda function has been warmed up, performance will improve.  
 
 &nbsp;
