@@ -238,11 +238,15 @@ You finished Part 2 of the workshop! If you do not plan to immediately continue 
 
 ### Section 1: Deploy a search extension to AWS Full-Stack Template
 
+### Getting started
+
 In this section, you will start with the application you deployed in **Part 1** with AWS Full-Stack Template and deploy an extension (via CloudFormation) to add onto the application.  The purpose of this section is to illustrate how you can take a basic application like the Goals app and turn it into something different by adding components.
 
 #### Step 1: Deploy the search extension in your AWS account
 
 Following the same guidelines for CloudFormation as in Part 1 and Part 2 of this workshop, create a new stack, and use the template provided in the **Extensions** folder in the GitHub repo for AWS Full-Stack Template to add search capabilities to the Goals app via Elasticsearch service.  Deploy the extension.
+
+[![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=SearchExtension&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml)
 
 #### Step 2: Play with the search capability
 
