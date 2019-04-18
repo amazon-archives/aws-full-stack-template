@@ -1,6 +1,6 @@
 # Workshop readme  
 
-Hello workshoppers! We are excited for you to join us to learn how to build your own stack in just a few clicks!  During this workshop, you will create two full-fledged web applications, explore how they work, and learn how you might customize them for your own purposes. 
+Hello workshoppers! We are excited for you to join us to learn how to build your own stack in just a few clicks!  During this workshop, you will create two full-fledged web applications ([AWS Full-Stack Template](https://github.com/awslabs/aws-full-stack-template) and [AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app)), explore how they work, and learn how you might customize them for your own purposes. 
 
 ## License Summary
 
@@ -47,7 +47,7 @@ In order to maximize your time at the workshop, please make sure you have an AWS
 
 ## Part 1: AWS Full-Stack Template
 
-In this part of the workshop, you will spin up a complete instance of AWS Full-Stack Template, understand the application architecture, manually change some components, and explore adding additions.
+In this part of the workshop, you will spin up a complete instance of [AWS Full-Stack Template](https://github.com/awslabs/aws-full-stack-template), understand the application architecture, manually change some components, and explore adding additions.
 
 
 ### Section 1: Get to know the app
@@ -139,7 +139,7 @@ You finished Part 1 of the workshop!  If you do not plan to immediately continue
 
 ## Part 2: AWS Bookstore Demo App
 
-In this part of the workshop, you will spin up a complete instance of AWS Bookstore Demo App, understand the application architecture, manually change some components, and explore adding additions.  If you just completed **Part 1: AWS Full-Stack Template**, some of these instructions will be repetitive.
+In this part of the workshop, you will spin up a complete instance of [AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app), understand the application architecture, manually change some components, and explore adding additions.  If you just completed **Part 1: AWS Full-Stack Template**, some of these instructions will be repetitive.
 
 
 ### Section 1: Get to know the app
