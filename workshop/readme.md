@@ -22,7 +22,7 @@ This sample code is made available under a modified MIT license. See the LICENSE
   - [Section 3: Change the application (optional)](#section-3-change-the-application-optional)
 - [Part 3: Extensions](#part-3-extensions)
   - [Section 1: Deploy a search extension to AWS Full-Stack Template](#section-1-deploy-a-search-extension-to-aws-full-stack-template)
-  - [Section 2: Build your own extension!](#section-2-build-your-own-extension)
+  - [Section 2: Build your own extension! (optional)](#section-2-build-your-own-extension-optional)
 - [Part 4: Cleanup!](#part-4-cleanup)
 - [Part 5: Build on!](#part-5-build-on)
 - [Questions and contact](#questions-and-contact)
@@ -90,7 +90,7 @@ Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB con
 Open the Cognito console, and choose "Manager User Pools."  Look for the user pool with the stack name you used when deploying the goals app in CloudFormation and open this user pool.  Choose "Users and groups" in left navigation menu and choose one of your users.  If you only signed up yourself, you can choose to delete your own user and then sign up again, or create another user from the frontend and delete that user.  Next, choose "Disable user" and then click the "Delete user" button that appears.  Tada!  You are an amazing administrator.
 
 #### Step 3: Change the application into a notes application *(optional)*
-The goals application is not that far off from a simple notes application - it contains a title and a description field.  You could easily turn the goals app into a notes-taking app by simply changing the titles, column headers, and buttons on the pages.  Of course, that wouldn't change the bakckend (APIs, Lambda functions, and Tables), so if you were really passionate about changing the entire application into a notes app, you could make the requisite changes throughout.
+The goals application is not that far off from a simple notes application - it contains a title and a description field.  You could easily turn the goals app into a notes-taking app by simply changing the titles, column headers, and buttons on the pages.  Of course, that wouldn't change the backend (APIs, Lambda functions, and Tables), so if you were really passionate about changing the entire application into a notes app, you could make the requisite changes throughout.
 
 This entire step is optional, but illustrative if you want to learn more about the different backend pieces.
 
@@ -114,7 +114,7 @@ ExpressionAttributeValues: {
     },
 ```
 
-Note we have added the "lastUpdated" parameter in two places.  Save your function.  Since the function hasn't been used yet, there won't be any "lastUpdated" record created it is called, so go modify one of your goals in the app.  You can change the title or description (up to you), and choose "Update goal."  
+Note we have added the "lastUpdated" parameter in two places.  Save your function.  Since the function hasn't been used yet, there won't be any "lastUpdated" record created until the function is called, so go modify one of your goals in the app.  You can change the title or description (up to you), and choose "Update goal."  
 
 Next, let's go to DynamoDB to verify the new "lastUpdated" information is passed through.  Open the DynamoDB console and search for a table ending in "-Goals."  Open the goal you updated, and you should now see the "lastUpdated" information in the item. 
 
@@ -150,7 +150,7 @@ Visit https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/README.m
 
 #### Step 2: Play with the deployed Bookstore
 
-At the top of the readme, choose **Try out the deployed application here!** This will open a new window with a fully-deployed version of AWS Bookstore Demo App. Sign up using an email address and password, and then log in to the app. Check out the different product categories, and add some items to your cart.  Search for some books by title, author, or category using the search bar.  View the *Best Sellers* list, and see if you can move something to the top of the list by ordering a bunch.  Finally, take a look at the social recommendations on the home page and the *Best Sellers* page.  
+At the top of the readme, choose **Try out the deployed application here!** This will open a new window with a fully-deployed version of AWS Bookstore Demo App. Sign up using an email address and password, and then log in to the app. View the different product categories, add some items to your cart, and checkout.  Search for a few books by title, author, or category using the search bar.  View the *Best Sellers* list, and see if you can move something to the top of the list by ordering a bunch of books.  Finally, take a look at the social recommendations on the home page and the *Best Sellers* page.  
 
 #### Step 3: Deploy the application in your own AWS account
 
@@ -191,20 +191,20 @@ First, make sure you have at least two books in your *Past orders* list with dif
 
 If you're like us, you ordered over 1000 copies of one of the books to bump it to the top of the list.  That was clearly an ordering error, so let's go correct the *Best Sellers* list.  In order to do this, open the DynamoDB console and find the orders table.  Next, find the entry for your big order and open the item to edit it.  Open the "books" list, and then edit the "quantity" to be less than one of your other ordered books.  Click save.  Wait a few moments, and then go to the bookstore endpoint and refresh the page.  You should notice the book moved in the list.
 
-Just like with updating the search experience, in the backend, DynamoDB Streams automatically pushed this information to ElastiCache for Redis, and the *Best Sellers* list was upldated.
+Just like with updating the search experience, in the backend, DynamoDB Streams automatically pushed this information to ElastiCache for Redis, and the *Best Sellers* list was updated.
 
 
 ### Section 3: Change the application *(optional)*
 
 By this point, you should have a pretty good feel for the different architectural components of AWS Bookstore Demo App, and how it is just one example of what you might create with AWS Full-Stack Template.  You can choose to start with the basic template and add on, or start with something more full-featured (like the bookstore) and change it.  Either way, you have the foundational services, components, and plumbing you need to start building any web application.
 
-Here are a few ideas for you might change AWS Bookstore Demo App.  Note: many of these are advanced!  You are also welcome to move on to **Part 3: Extensions** if you like.
+Here are a few ideas for how you might change AWS Bookstore Demo App.  Note: many of these are advanced!  You are also welcome to move on to **Part 3: Extensions** if you like.
 
 #### Option 1: Use it for your own storefront *(medium)*
 
 Perhaps you are interested in spinning up your own storefront.  You will likely still want to have a product catalog, categories, search, best sellers, etc., so this app is a very good place to start.  
 
-Let's imagine that you are going to sell furniture.  Go into DynamoDB and change the structure (and content) of all of the tables to reflect that you are selling furniture.  Don't forget to go to API Gateway and make the requisite changes there as well.
+Let's imagine that you are going to sell furniture.  Go into DynamoDB and change the structure (and content) of all of the tables to reflect that you are selling furniture.  You'll also want to go to API Gateway and make the requisite changes.  Finally, you can make changes to the frontend assets in CodeCommit to reflect your new look, furniture categories (instead of books), etc., and then push these changes through CodePipeline to update your storefront.
 
 #### Option 2: Add individual product pages *(hard)*
 
@@ -284,7 +284,7 @@ In this section, you will try to build your own extension on top of an existing 
 
 #### Step 1: Tear apart the search extension in Section 1
 
-In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 3, Section 1.  Download the CloudFormation template and understand the different elements that are being deployed.  Open at the Lambda functions to explore the logic for how/when conditional checks are made.
+In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 3, Section 1.  Open the CloudFormation template and understand the different elements that are being deployed.  Open the Lambda functions to explore the logic for how/when conditional checks are made.
 
 #### Step 2: Decide what type of extension you want to build
 
