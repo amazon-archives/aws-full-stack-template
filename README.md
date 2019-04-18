@@ -167,7 +167,7 @@ GoalsTable {
 }
 ```
 
-The table's primary key is made up of the user ID (partition key) and the goal ID (sort key). This allows a user to view only their own goals, and look up any of their goals through a unique identifier.
+The table's primary key is made up of the user ID (partition key) and the goal ID (sort key).  This composite primary key allows us to use DynamoDB's scan capability - with only the user ID set - and return only the goals that that are in the user's account.  It also allows us to query DynamoDB on a user ID and goal ID, returning goal details without additional data processing.
 
 &nbsp;
 
@@ -361,6 +361,7 @@ Similar to CloudWatch, the capabilities provided by CodeCommit, CodePipeline, an
 
 * The application was written for demonstration purposes and not for production use.
 * Validation is working properly from an end-user standpoint, but is not cleanly implemented. For instance, the submit buttons (to create a goal, update a goal, login, signup, and enter confirmation code) are disabled (as designed) when validation fails, but we added an extra helper function to support this.  This issue occured when the app was upgraded to Bootstrap 4.  We plan to fix this in a future revision.
+* In today's implementation, we have all of the Lambda functions associated with one IAM role.  Ideally, each Lambda function would have its own scoped-down IAM role and policies.
 * Upon the first use of a Lambda function, cold start times can be slow. Once the Lambda function has been warmed up, performance will improve.  
 
 &nbsp;
