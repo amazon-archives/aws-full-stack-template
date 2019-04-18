@@ -93,7 +93,7 @@ export default class Home extends Component<HomeProps, HomeState> {
         <Table variant="dark'">
           <thead>
             <tr>
-              <th>Goal name</th>
+              <th>Title</th>
               <th>Description</th>
               <th>Date created</th>
             </tr>
