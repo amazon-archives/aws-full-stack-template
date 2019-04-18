@@ -11,22 +11,20 @@ This sample code is made available under a modified MIT license. See the LICENSE
 ## Outline
 
 - [Overview](#overview)
-  - [Prerequisite](#prerequisite-aws-account)
-  - [Getting started](#getting-started)
-  - [Cleaning up](#cleaning-up)
+  - [Prerequisite: AWS account](#prerequisite-aws-account)
 - [Part 1: AWS Full-Stack Template](#part-1-aws-full-stack-template)
-- [Implementation details](#implementation-details)
-  - [Amazon DynamoDB](#amazon-dynamodb)
-  - [Amazon API Gateway](#amazon-api-gateway)
-  - [AWS Lambda](#aws-lambda)
-  - [AWS IAM](#aws-iam)
-  - [Amazon Cognito](#amazon-cognito)
-  - [Amazon Cloudfront and Amazon S3](#amazon-cloudfront-and-amazon-s3)
-  - [Amazon Cloudwatch](#amazon-cloudwatch)
-  - [AWS CodeCommit, AWS CodePipeline, AWS CodeBuild](#aws-codecommit-aws-codepipeline-aws-codebuild)
-- [Considerations for demo purposes](#considerations-for-demo-purposes)
-- [Known limitations](#known-limitations)
-- [Additions, forks, and contributions](#additions-forks-and-contributions)
+  - [Section 1: Get to know the app](#section-1-get-to-know-the-app)
+  - [Section 2: Explore the backend](#section-2-explore-the-backend)
+  - [Section 3: Add on to the application](#section-3-add-on-to-the-application)
+- [Part 2: AWS Bookstore Demo App](#part-2-aws-bookstore-demo-app)
+  - [Section 1: Get to know the app](#section-1-get-to-know-the-app-1)
+  - [Section 2: Explore the backend](#section-2-explore-the-backend-1)
+  - [Section 3: Change the application (optional)](#section-3-change-the-application-optional)
+- [Part 3: Extensions](#part-3-extensions)
+  - [Section 1: Deploy a search extension to AWS Full-Stack Template](#section-1-deploy-a-search-extension-to-aws-full-stack-template)
+  - [Section 2: Build your own extension!](#section-2-build-your-own-extension)
+- [Part 4: Cleanup!](#part-4-cleanup)
+- [Part 5: Build on!](#part-5-build-on)
 - [Questions and contact](#questions-and-contact)
 
 &nbsp;
@@ -35,7 +33,7 @@ This sample code is made available under a modified MIT license. See the LICENSE
 
 If you complete this workshop in it's entirety, good for you!  We are very impressed.  This workshop is not only designed to help you learn how to leverage these application templates, but also it is intended to leave you with ideas for how you might change and extend these (or other) applications in the future.  There are several advanced sections to the workshop (marked as optional) that you can take home with you after the workshop session.
 
-### Prerequisite: AWS Account
+### Prerequisite: AWS account
 
 In order to maximize your time at the workshop, please make sure you have an AWS account set up.  If you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
 
@@ -134,7 +132,7 @@ Visit https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/README.m
 
 #### Step 2: Play with the deployed Bookstore
 
-At the top of the readme, choose **Try out the deployed application here!** This will open a new window with a fully-deployed version of AWS Bookstore Demo App. Sign up using an email address and password, and then log in to the app. Check out the different product categories, and add some items to your cart.  Search for some books by title, author, or category using the search bar.  View the *Best Sellers* list, and see if you can move something to the top of the list by ordering a bunch.  Finally, take a look at the social recommendations on the home page and the Best Sellers page.  
+At the top of the readme, choose **Try out the deployed application here!** This will open a new window with a fully-deployed version of AWS Bookstore Demo App. Sign up using an email address and password, and then log in to the app. Check out the different product categories, and add some items to your cart.  Search for some books by title, author, or category using the search bar.  View the *Best Sellers* list, and see if you can move something to the top of the list by ordering a bunch.  Finally, take a look at the social recommendations on the home page and the *Best Sellers* page.  
 
 #### Step 3: Deploy the application in your own AWS account
 
@@ -172,14 +170,14 @@ Since you've deployed this application, you deserve a reward!  Let's make you th
 
 #### Step 3: Manually edit the leaderboard/Best Sellers list
 
-If you're like us, you ordered over 1000 copies of one of the books to bump it to the top of the Best Sellers list.  That was clearly an ordering error, so let's go correct the Best Sellers list.  In order to do this, first open the ElastiCache for Redis console.
+If you're like us, you ordered over 1000 copies of one of the books to bump it to the top of the *Best Sellers* list.  That was clearly an ordering error, so let's go correct the *Best Sellers* list.  In order to do this, first open the ElastiCache for Redis console.
 
 
 ### Section 3: Change the application *(optional)*
 
 By this point, you should have a pretty good feel for the different architectural components of AWS Bookstore Demo App, and how it is just one example of what you might create with AWS Full-Stack Template.  You can choose to start with the basic template and add on, or start with something more full-featured (like the bookstore) and change it.  Either way, you have the foundational services, components, and plumbing you need to start building any web application.
 
-Here are a few ideas for you might change AWS Bookstore Demo App.  Note: some of these are advanced!  You are also welcome to move on to *Part 3: Extensions* if you like.
+Here are a few ideas for you might change AWS Bookstore Demo App.  Note: some of these are advanced!  You are also welcome to move on to **Part 3: Extensions** if you like.
 
 #### Option 1: Use ElasticSearch (instead of DynamoDB) to return books by category *(easy)*
 
@@ -197,11 +195,11 @@ One thing missing from the bookstore (or your furniture store) is individual pag
 
 #### Option 4: Turn it into a blog *(hard)*
 
-Now that you've added individual product pages, you are not that far off from a blog website.  The search experience will help viewers find your content, the Best Sellers list can effectively return your most popular posts, and the product catalog and product pages can be your blog entries!  What else can you do?
+Now that you've added individual product pages, you are not that far off from a blog website.  The search experience will help viewers find your content, the *Best Sellers* list can effectively return your most popular posts, and the product catalog and product pages can be your blog entries!  What else can you do?
 
 #### Option 5: Use a different database *(hardest)*
 
-Perhaps you want to use a different database for your product catalog (i.e. Amazon Aurora).  Change the backend structure, API calls, and other lookups to use a different database structure and call the other service.
+Perhaps you want to use a different database for your product catalog (i.e. Amazon Aurora).  Change the backend structure, API calls, and other lookups to use a different database structure and call t other service.
 
 #### Option 6: Build out the “Friends” functionality in the Bookstore *(hardest)*
 
@@ -210,7 +208,7 @@ One of the main items that is missing from the current AWS Bookstore Demo App im
 
 ## End of Part 2
 
-You finished **Part 2** of the workshop! If you do not plan to immediately continue to **Part 3: Extensions** and explore deploying (and maybe even creating) extensions to your applications, please skip ahead to **Part 4: Cleanup!**
+You finished Part 2 of the workshop! If you do not plan to immediately continue to **Part 3: Extensions** and explore deploying (and maybe even creating) extensions to your applications, please skip ahead to **Part 4: Cleanup!**
 
 &nbsp;
 
@@ -226,9 +224,9 @@ In this section, you will start with the basic AWS Full-Stack Template and deplo
 
 #### Step 1: Deploy the extension in your AWS account
 
-Following the same guidelines for CloudFormation as in Parts 1 and 2 of this workshop, create a new stack, and use the template provided in the *Extensions* folder in the GitHub repo for AWS Full-Stack Template.  Deploy the extension.
+Following the same guidelines for CloudFormation as in Parts 1 and 2 of this workshop, create a new stack, and use the template provided in the **Extensions** folder in the GitHub repo for AWS Full-Stack Template.  Deploy the extension.
 
-#### Step 2: play with the search capability
+#### Step 2: Play with the search capability
 
 Now that you've deployed the search extension, try a few sample searches to see if your goals are returned.  If you want, integrate the search functionality into the frontend website.
 
