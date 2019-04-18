@@ -90,7 +90,7 @@ Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB con
 Open the Cognito console, and choose "Manager User Pools."  Look for the user pool with the stack name you used when deploying the goals app in CloudFormation and open this user pool.  Choose "Users and groups" in left navigation menu and choose one of your users.  If you only signed up yourself, you can choose to delete your own user and then sign up again, or create another user from the frontend and delete that user.  Next, choose "Disable user" and then click the "Delete user" button that appears.  Tada!  You are an amazing administrator.
 
 #### Step 3: Change the application into a notes application *(optional)*
-The goals application is not that far off from a simple notes application - it contains a title and a description field.  You could easily turn the goals app into a notes-taking app by simply changing the titles, column headers, and buttons on the pages.  Of course, that wouldn't change the bakckend (APIs, Lambda functions, and Tables), so of you were really passionate about changing the entire application into a notes app, you could make the requisite changes throughout.
+The goals application is not that far off from a simple notes application - it contains a title and a description field.  You could easily turn the goals app into a notes-taking app by simply changing the titles, column headers, and buttons on the pages.  Of course, that wouldn't change the bakckend (APIs, Lambda functions, and Tables), so if you were really passionate about changing the entire application into a notes app, you could make the requisite changes throughout.
 
 This entire step is optional, but illustrative if you want to learn more about the different backend pieces.
 
