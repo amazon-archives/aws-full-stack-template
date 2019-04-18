@@ -1,0 +1,22 @@
+@media all and (min-width: 480px) {
+  .Login {
+    max-width: 350px;
+    height: 100%;
+    padding: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .Login form {
+    margin: 0 auto;
+    max-width: 320px;
+  }
+}
+
+.control-label{
+	color: #fff !important;
+  text-shadow: none !important;
+  font-size: 20px !important;
+  font-weight: 200;
+}

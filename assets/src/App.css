@@ -1,0 +1,47 @@
+.App {
+  margin-top: 15px;
+  color: white;
+}
+
+.navbar-default{
+  background-color: transparent  !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  border: 0 !important;
+}
+
+.navbar-default .navbar-brand{
+  text-shadow: none !important;
+  padding: 20px 0;
+  font-size: 28px;
+  line-height:30px;
+}
+
+.navbar-brand, .navbar-nav > li > a{
+  color: white !important;
+  text-shadow: none !important;
+  font-size: 20px;
+}
+
+.navbar-brand, .navbar-nav > li{
+  padding: 10px  0;
+  line-height:30px;
+  display: block;
+}
+
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .active > a{
+  background-image: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .active > a:active{
+  background-image: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .active > a:focus{
+  background-image: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}

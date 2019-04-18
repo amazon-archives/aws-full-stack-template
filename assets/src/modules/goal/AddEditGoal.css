@@ -1,0 +1,29 @@
+.goal {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.goal form {
+  padding-bottom: 15px;
+}
+
+.header {
+  margin-bottom: 10px;
+  float: right;
+}
+
+.form-body {
+  clear: both;
+}
+
+.goal .form-group .control-label {
+  font-size: 16px !important;
+}
+
+.modal-text {
+  color: black !important;
+}
+
+#contained-modal {
+  color: black;
+}

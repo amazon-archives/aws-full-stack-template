@@ -1,0 +1,74 @@
+.Home .lander {
+  padding: 80px 0;
+  text-align: center;
+}
+
+.Home .lander h1 {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+}
+
+.Home .lander p {
+  color: white;
+}
+
+.Home .goals h4 {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  overflow: hidden;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.Home .goals table {
+  margin-top: 30px;
+  color: white;
+  table-layout: fixed;
+}
+
+.Home .goals table a {
+  color: #4eacf9;
+}
+
+.list-group {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.list-group-item h4 {
+  font-size: 24px;
+  font-weight: 100 !important;
+}
+
+.list-group-item-text {
+  font-weight: 100 !important;
+  font-size: 18px !important;
+  padding-left: 30px;
+}
+
+.list-group-item-heading {
+  font-weight: 200 !important;
+  font-size: 24px !important;
+  padding-left:30px;
+}
+
+.container-fluid {
+  padding-right: 0 !important;
+}
+
+.description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.orange-link {
+  color: #ff9900 !important;
+}
+
+.center-spinner {
+  position: absolute;
+  margin-top: 20px;
+  left: 50%;
+}

@@ -1,0 +1,36 @@
+{
+  "name": "marvin-2.0",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@types/graphql": "^14.0.5",
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.12",
+    "@types/react": "^16.8.10",
+    "@types/react-dom": "^16.8.3",
+    "@types/react-router-bootstrap": "^0.24.5",
+    "@types/react-router-dom": "^4.3.1",
+    "aws-amplify": "^1.0.30",
+    "bootstrap": "^4.3.1",
+    "react": "^16.8.0",
+    "react-bootstrap": "^1.0.0-beta.6",
+    "react-dom": "^16.8.6",
+    "react-router-bootstrap": "^0.24.4",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "^2.1.0",
+    "typescript": "^3.2.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {},
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
