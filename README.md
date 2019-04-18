@@ -1,6 +1,6 @@
 ## AWS Full-Stack Template
 
-AWS Full-Stack Template is a full-stack sample web application that creates a simple CRUD (create, read, update, delete) app, and provides the foundational services, components, and plumbing needed to get a basic web application up and running. [Try out the deployed application here](link)!
+AWS Full-Stack Template is a full-stack sample web application that creates a simple CRUD (create, read, update, delete) app, and provides the foundational services, components, and plumbing needed to get a basic web application up and running. **[Try out the deployed application here](https://d2k5b8bzo1vefz.cloudfront.net/)**!
 
 The entire application - frontend, backend, and all configuration - can deployed in your AWS account with a single CloudFormation template.  Get started with building your own below!
 &nbsp;
