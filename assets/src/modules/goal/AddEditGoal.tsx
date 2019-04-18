@@ -195,7 +195,7 @@ export default class AddEditGoal extends Component<AddEditGoalProps, AddEditGoal
 
             <div className="form-body">
               <FormGroup className="blinking-cursor">
-                <FormLabel>Goal title</FormLabel>
+                <FormLabel>Title</FormLabel>
                 <FormControl id="title"
                   onChange={this.handleChange}
                   value={goal.title}
@@ -206,7 +206,7 @@ export default class AddEditGoal extends Component<AddEditGoalProps, AddEditGoal
               </FormGroup>
 
               <FormGroup >
-                <FormLabel>Goal description</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl id="content"
                   onChange={this.handleChange}
                   value={goal.content}
