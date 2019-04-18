@@ -49,6 +49,7 @@ In order to maximize your time at the workshop, please make sure you have an AWS
 
 In this part of the workshop, you will spin up a complete instance of AWS Full-Stack Template, understand the application architecture, manually change some components, and explore adding additions.
 
+
 ### Section 1: Get to know the app
 
 #### Step 1: Open the readme
@@ -71,43 +72,59 @@ While the application is deploying in CloudFormation (should take ~10-15 minutes
 
 #### Step 5: Open the endpoint from CloudFormation
 
-Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click to open this link and explore your brand-new goals app!
+Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new goals app!
 
-Since this is a completely new instance of the application, your username and password that you used before won't work.  Sign up for an account in your goals app, and test out the app!  Test to make sure the verification email works, that you can create, update, and delete goals, etc.
+Since this is a completely new instance of the application, your username and password that you used before in Step 2 won't work.  Sign up for an account in your goals app, and test out the app!  Test to make sure the verification email works, that you can create, update, and delete goals, etc.
 
 
 ### Section 2: Explore the backend
 
-Now that the application is up and running, let's open the hood and play around with some of the backend components.  We'll explore this by adding a “Last updated” or “Last modified” column to the goals list page.
+Now that the application is up and running, let's open the hood and play around with some of the backend components.  
 
-#### Step 1: Open the Lambda function
+#### Step 1: Change the details for one of your goals directly in DynamoDB
 
-Modify the LambdaFunction to add an updated time, which will pass 
+Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB console, find the table ending in "Goals" that corresponds to this project, and choose one of the goal items to modify.  Change either the "title" string or the "content" string (which maps to the "Description" field in the app), and save your change in DynamoDB.  Return to the goals app, and refresh the page.  You should see your change reflected in the list.  
 
-#### Step 2: Check something in CloudWatch
+#### Step 2: Delete a user in Cognito
 
+Open the Cognito console, and choose "Manager User Pools."  Look for the user pool with the stack name you used when deploying the goals app in CloudFormation and open this user pool.  Choose "Users and groups" in left navigation menu and choose one of your users.  If you only signed up yourself, you can choose to delete your own user and then sign up again, or create another user from the frontend and delete that user.  Next, choose "Disable user" and then click the "Delete user" button that appears.  Tada!  You are an amazing administrator.
 
+#### Step 3: Change the application into a notes application *(optional)*
+The goals application is not that far off from a simple notes application - it contains a title and a description field.  You could easily turn the goals app into a notes-taking app by simply changing the titles, column headers, and buttons on the pages.  Of course, that wouldn't change the bakckend (APIs, Lambda functions, and Tables), so of you were really passionate about changing the entire application into a notes app, you could make the requisite changes throughout.
 
-#### Step 3: Change something Somewhere else
-
-
+This entire step is optional, but illustrative if you want to learn more about the different backend pieces.
 
 
 ### Section 3: Add on to the application
 
 By this point, you should have a pretty good feel for the different architectural components of AWS Full-Stack Template.  Since this is designed to provide you with the foundational services, components, and plumbing needed to get a basic web application up and running (it's a template, after all!) the next step is to add on to the application and make it your own.
 
-#### Step 1: Add X
+#### Step 1: Add a "Last updated" or "Last modified" parameter
 
+First, you'll need to modify the "UpdateGoal" Lambda function to add the current time for the update, which will pass this information to DynamoDB.  To do this, open the [AWS Lambda console](https://console.aws.amazon.com/lambda) and search for "goal" which should return a list of the functions created in your account by the CloudFormation template.  Choose the one that ends in "UpdateGoal" and scroll down to the "Function code" card.
 
+Add a parameter to "UpdateExpression" and a new line under "ExpressionAttributeValues" so it looks like this:
 
-#### Step 2: Add Y
+```js
+UpdateExpression: "SET title = :title, content = :content, lastUpdated = :lastUpdated",
+ExpressionAttributeValues: {
+      ":title": data.title ? data.title : null,
+      ":content": data.content ? data.content : null,
+      ":lastUpdated": Date.now()
+    },
+```
 
+Note we have added the "lastUpdated" parameter in two places.  Save your function.  Since the function hasn't been used yet, there won't be any "lastUpdated" record created it is called, so go modify one of your goals in the app.  You can change the title or description (up to you), and choose "Update goal."  
 
+Next, let's go to DynamoDB to verify the new "lastUpdated" information is passed through.  Open the DynamoDB console and search for a table ending in "-Goals."  Open the goal you updated, and you should now see the "lastUpdated" information in the item. 
 
-#### Step 3: Add Z
+#### Step 2: Add the new "Last updated" column to the goals list page
 
+Now that you have a snazzy new parameter to track when your goal was last updated, the next step is to add this information to the goals list page.  We'll leave this part to you, but here's a big hint: you'll only need to change one file. To get started, open the CodeCommit console, choose "Repositories" and then "Code" from the left navigation.  Navigate to /src/modules/signup/Home.tsx.  Choose "Edit" in the upper-right, make your changes, and then choose "Commit changes" at the bottom.  
 
+Next, go to the pipeline that was set up for you.  Chose "Pipeline" from the left navigation, then choose "Pipelines."  Open the pipeline associated with your goals app project, and choose "Release change."
+
+Wait a few minutes for the change to go through, and refresh your goals app.  What else can you add?
 
 
 ## End of Part 1
@@ -123,6 +140,7 @@ You finished Part 1 of the workshop!  If you do not plan to immediately continue
 ## Part 2: AWS Bookstore Demo App
 
 In this part of the workshop, you will spin up a complete instance of AWS Bookstore Demo App, understand the application architecture, manually change some components, and explore adding additions.  If you just completed **Part 1: AWS Full-Stack Template**, some of these instructions will be repetitive.
+
 
 ### Section 1: Get to know the app
 
@@ -150,9 +168,9 @@ What differences can you find in the architecture?  How many DynamoDB tables are
 
 #### Step 5: Open the endpoint from CloudFormation
 
-Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL. This is the public endpoint to your deployed application. Click to open this link and explore your brand-new Bookstore!
+Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL. This is the public endpoint to your deployed application. Click the link to open and explore your brand-new Bookstore!
 
-Since this is a completely new instance of the application, your username and password that you used before won't work. Sign up for an account in your Bookstore, and test out the app! Test to make sure the email verification works, and run through some of the use cases from before like search, cart, ordering, and best sellers.
+Since this is a completely new instance of the application, your username and password that you used before in Step 2 won't work. Sign up for an account in your Bookstore, and test out the app! Test to make sure the email verification works, and run through some of the use cases from before like search, cart, ordering, and best sellers.
 
 
 ### Section 2: Explore the backend
@@ -161,47 +179,46 @@ Now that the application is up and running, let's open the hood and play around 
 
 #### Step 1: Change the author of a book in DynamoDB
 
-Since you've deployed this application, you deserve a reward!  Let's make you the instant author of your favorite book in the bookstore.  Open the DynamoDB console, find the BooksTable, find the name of the book you want to be the author of, and change the Author name.  Refresh the bookstore page.
-
+Since you've deployed this application, you deserve a reward!  Let's make you the instant author of your favorite book in the bookstore.  Open the DynamoDB console, find the BooksTable, find the name of the book you want to be the author of, and change the Author name.  Refresh the bookstore page.  Congratulations, you are an author in your own personal bookstore!
 
 #### Step 2: Update search to reflect your new authorship
 
-
+This might be the easiest step.  After you updated the Author name, in the backend, DynamoDB Streams automatically pushed this information to the Elasticsearch cluster for your application.  In the bookstore page, try searching for your name.  The book you authored should be returned.
 
 #### Step 3: Manually edit the leaderboard/Best Sellers list
 
-If you're like us, you ordered over 1000 copies of one of the books to bump it to the top of the *Best Sellers* list.  That was clearly an ordering error, so let's go correct the *Best Sellers* list.  In order to do this, first open the ElastiCache for Redis console.
+First, make sure you have at least two books in your *Past orders* list with different order quantities.  Unless you've already created multiple accounts for the boosktore, the books in your *Past orders* list will match the books in the *Best Sellers* list (since the bookstore started with no orders).  
+
+If you're like us, you ordered over 1000 copies of one of the books to bump it to the top of the list.  That was clearly an ordering error, so let's go correct the *Best Sellers* list.  In order to do this, open the DynamoDB console and find the orders table.  Next, find the entry for your big order and open the item to edit it.  Open the "books" list, and then edit the "quantity" to be less than one of your other ordered books.  Click save.  Wait a few moments, and then go to the bookstore endpoint and refresh the page.  You should notice the book moved in the list.
+
+Just like with updating the search experience, in the backend, DynamoDB Streams automatically pushed this information to ElastiCache for Redis, and the *Best Sellers* list was upldated.
 
 
 ### Section 3: Change the application *(optional)*
 
 By this point, you should have a pretty good feel for the different architectural components of AWS Bookstore Demo App, and how it is just one example of what you might create with AWS Full-Stack Template.  You can choose to start with the basic template and add on, or start with something more full-featured (like the bookstore) and change it.  Either way, you have the foundational services, components, and plumbing you need to start building any web application.
 
-Here are a few ideas for you might change AWS Bookstore Demo App.  Note: some of these are advanced!  You are also welcome to move on to **Part 3: Extensions** if you like.
+Here are a few ideas for you might change AWS Bookstore Demo App.  Note: many of these are advanced!  You are also welcome to move on to **Part 3: Extensions** if you like.
 
-#### Option 1: Use ElasticSearch (instead of DynamoDB) to return books by category *(easy)*
+#### Option 1: Use it for your own storefront *(medium)*
 
-In the newly-deployed bookstore, when the user clicks on a given product category in the homepage, 
-
-#### Option 2: Use it for your own storefront *(medium)*
-
-Perhaps you are interested in spinning up your own storefront, but you don't need a social experience.  You will likely still want to have a product catalog, categories, search, best sellers, etc., so this app is a very good place to start.  
+Perhaps you are interested in spinning up your own storefront.  You will likely still want to have a product catalog, categories, search, best sellers, etc., so this app is a very good place to start.  
 
 Let's imagine that you are going to sell furniture.  Go into DynamoDB and change the structure (and content) of all of the tables to reflect that you are selling furniture.  Don't forget to go to API Gateway and make the requisite changes there as well.
 
-#### Option 3: Add individual product pages *(hard)*
+#### Option 2: Add individual product pages *(hard)*
 
 One thing missing from the bookstore (or your furniture store) is individual pages for your products.  Build out an additional table(s) or rows in DynamoDB to contain the structured information for your product pages.  
 
-#### Option 4: Turn it into a blog *(hard)*
+#### Option 3: Turn the bookstore into a blog *(hard)*
 
-Now that you've added individual product pages, you are not that far off from a blog website.  The search experience will help viewers find your content, the *Best Sellers* list can effectively return your most popular posts, and the product catalog and product pages can be your blog entries!  What else can you do?
+Now that you've added individual product pages, you are not that far off from a robust blog application.  The search experience will help viewers find your content, the *Best Sellers* list can effectively return your most popular posts, and the product catalog and product pages can be your blog entries!  What else can you do?
 
-#### Option 5: Use a different database *(hardest)*
+#### Option 4: Use a different database *(hardest)*
 
-Perhaps you want to use a different database for your product catalog (i.e. Amazon Aurora).  Change the backend structure, API calls, and other lookups to use a different database structure and call t other service.
+Perhaps you want to use a different database for your product catalog (i.e. Amazon Aurora).  Change the backend structure, API calls, and other lookups to use a different database structure and call the other service.
 
-#### Option 6: Build out the “Friends” functionality in the Bookstore *(hardest)*
+#### Option 5: Build out the “Friends” functionality in the Bookstore *(hardest)*
 
 One of the main items that is missing from the current AWS Bookstore Demo App implementation is that there is no way to manage (view, add, remove) your friends.  Build a friends management system and add it into the bookstore.
 
@@ -218,9 +235,10 @@ You finished Part 2 of the workshop! If you do not plan to immediately continue 
 
 ## Part 3: Extensions
 
+
 ### Section 1: Deploy a search extension to AWS Full-Stack Template
 
-In this section, you will start with the basic AWS Full-Stack Template and deploy an extension (via CloudFormation) to add onto the application.  The purpose of this section is to illustrate how you can take a basic application like the Goals app and turn it into something different by adding components.
+In this section, you will start with the application you deployed in **Part 1** with AWS Full-Stack Template and deploy an extension (via CloudFormation) to add onto the application.  The purpose of this section is to illustrate how you can take a basic application like the Goals app and turn it into something different by adding components.
 
 #### Step 1: Deploy the extension in your AWS account
 
@@ -228,16 +246,20 @@ Following the same guidelines for CloudFormation as in Parts 1 and 2 of this wor
 
 #### Step 2: Play with the search capability
 
-Now that you've deployed the search extension, try a few sample searches to see if your goals are returned.  If you want, integrate the search functionality into the frontend website.
+Now that you've deployed the search extension, try a few sample searches to see if your goals are returned.  
+
+Enter info on how to test search with Lambda
+
+If you would like, you can go even further by integrating the search functionality into the frontend website.
 
 
-### Section 2: Build your own extension!
+### Section 2: Build your own extension! *(optional)*
 
 In this section, you will try to build your own extension on top of an existing application.  
 
 #### Step 1: Tear apart the search extension in Section 1
 
-In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we provide in Part 3, Section 1.  Download the CloudFormation template and understand the different elements that are being deployed.  Open at the Lambda functions to explore the logic for how/when conditional checks are made.
+In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 3, Section 1.  Download the CloudFormation template and understand the different elements that are being deployed.  Open at the Lambda functions to explore the logic for how/when conditional checks are made.
 
 #### Step 2: Decide what type of extension you want to build
 
