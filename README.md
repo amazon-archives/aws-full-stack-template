@@ -193,7 +193,7 @@ AWS Lambda is used in a few different places to run the application, as shown in
 
 **ListGoals**
 
-Lambda function that lists the user's goals. The user's account ID is retrieved through the request context (does not need to be explicity provided in the request).
+Lambda function that lists the user's goals. The user's account ID is retrieved through the request context (does not need to be explicitly provided in the request).
 
 ```js
 ListGoalsRequest {
