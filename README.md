@@ -167,7 +167,7 @@ GoalsTable {
 }
 ```
 
-The table's primary key is made up of the user ID (partition key) and the goal ID (sort key).  This composite primary key allows us to use DynamoDB's scan capability - with only the user ID set - and return only the goals that that are in the user's account.  It also allows us to query DynamoDB on a user ID and goal ID, returning goal details without additional data processing.
+The table's primary key is made up of the user ID (partition key) and the goal ID (sort key). Given that this composite primary key has both pieces of information, we can query on the user ID (partition key) alone, which will return only the goals that are in the specified user's account. It also allows us to query DynamoDB on the total composite key (user ID and goal ID), which will return goal details without additional data processing.
 
 &nbsp;
 
