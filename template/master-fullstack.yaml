@@ -76,7 +76,7 @@ Resources:
   TGoals:
     Type: 'AWS::DynamoDB::Table'
     Properties:
-      TableName: !Sub '${ProjectName}-Goals'
+      TableName: !Ref ProjectName
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
@@ -107,7 +107,7 @@ Resources:
       Timeout: 120
       Environment:
         Variables:
-          TABLE_NAME: !Sub '${ProjectName}-Goals'
+          TABLE_NAME: !Ref ProjectName
       Code:
         S3Bucket: !FindInMap 
           - S3Buckets
@@ -131,7 +131,7 @@ Resources:
       Timeout: 120
       Environment:
         Variables:
-          TABLE_NAME: !Sub '${ProjectName}-Goals'
+          TABLE_NAME: !Ref ProjectName
       Code:
         S3Bucket: !FindInMap 
           - S3Buckets
@@ -155,7 +155,7 @@ Resources:
       Timeout: 120
       Environment:
         Variables:
-          TABLE_NAME: !Sub '${ProjectName}-Goals'
+          TABLE_NAME: !Ref ProjectName
       Code:
         S3Bucket: !FindInMap 
           - S3Buckets
@@ -179,7 +179,7 @@ Resources:
       Timeout: 120
       Environment:
         Variables:
-          TABLE_NAME: !Sub '${ProjectName}-Goals'
+          TABLE_NAME: !Ref ProjectName
       Code:
         S3Bucket: !FindInMap 
           - S3Buckets
@@ -203,7 +203,7 @@ Resources:
       Timeout: 120
       Environment:
         Variables:
-          TABLE_NAME: !Sub '${ProjectName}-Goals'
+          TABLE_NAME: !Ref ProjectName
       Code:
         S3Bucket: !FindInMap 
           - S3Buckets
@@ -291,7 +291,7 @@ Resources:
   AppApi:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
-      Name: !Sub '${ProjectName}-Goals'
+      Name: !Ref ProjectName
       Description: API used for Goals requests
       FailOnWarnings: true
     Metadata:
@@ -580,7 +580,7 @@ Resources:
   UserPool:
     Type: 'AWS::Cognito::UserPool'
     Properties:
-      UserPoolName: !Sub '${ProjectName}-user-pool'
+      UserPoolName: !Ref ProjectName
       UsernameAttributes:
         - email
       AdminCreateUserConfig:
@@ -609,7 +609,7 @@ Resources:
   UserPoolClient:
     Type: 'AWS::Cognito::UserPoolClient'
     Properties:
-      ClientName: !Sub '${ProjectName}-client'
+      ClientName: !Ref ProjectName
       GenerateSecret: false
       UserPoolId: !Ref UserPool
   IdentityPool:
