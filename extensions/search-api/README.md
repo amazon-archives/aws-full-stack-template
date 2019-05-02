@@ -1,6 +1,6 @@
 ## Search API Extension
 
-The Search API Extension enables you to add search functionality on top of your DynamoDB data powered by ElasticSearch and API Gateway. The extension can be created with a single CloudFormation template!
+The Search API Extension enables you to add search functionality on top of your data in DynamoDB powered by ElasticSearch and API Gateway. The extension can be created with a single CloudFormation template!
 
 This extension takes in a DynamoDB table as a parameter. It will spin up an ElasticSearch cluster, stream changes from DynamoDB to ElasticSearch, and create a Search API.  You can choose an existing API Gateway id to integrate with or have the extension create a new one. 
 
@@ -13,6 +13,7 @@ Get started with adding search to your DynamoDB data below!
 - [Overview](#overview)
 - [Instructions](#instructions)
   - [Getting started](#getting-started)
+  - [Cleaning up](#cleaning-up)
 - [Architecture](#architecture)
 - [Implementation details](#implementation-details)
   - [Amazon DynamoDB](#amazon-dynamodb-streams)
@@ -24,11 +25,13 @@ Get started with adding search to your DynamoDB data below!
 
 ## Overview
 
-* Enable streams on your DynamoDB table to push updates
-* Create an Elasticsearch cluster with best practices
-* Process records and update Elasticsearch cluster via a Lambda function
-* Create a Search API with Lambda
-* Create or integrate with an existing API Gateway
+The provided CloudFormation template automates the entire creation and deployment of the Search API.  The template includes the following features:
+
+* Enables streams on your DynamoDB table to push updates
+* Creates an Elasticsearch cluster with best practices
+* Processes records and update Elasticsearch cluster via a Lambda function
+* Creates a Search API with Lambda
+* Creates or integrates with an existing API Gateway
 
 ## Instructions
 
@@ -40,15 +43,25 @@ To get the Search API Extension up and running in your AWS account, follow these
 
 1. Log into the AWS console (https://console.aws.amazon.com/) (if you are not already logged in)
 2. Choose Launch Stack to open the AWS CloudFormation console and create a new stack.
+[![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml)
+
 3. Continue through the CloudFormation wizard steps
     1. Name your stack, e.g. SearchAPI
     2. Enter the name of the DynamoDB table to integrate with
     3. Specify an existing API Gateway ID to integrate with, or we will auto-create an API Gateway Resource for you
     4. After reviewing, check the blue box for creating IAM resources. 
 
-
 4. Choose Create stack. This will take ~15 minutes to complete. 
 
+### Cleaning up
+
+To tear down your extension and remove all resources associated with the AWS Search API Extension, follow these steps:
+
+1. Log into the AWS CloudFormation Console and find the stack you created for the demo app
+2. Delete the stack
+    1. Double-check that the S3 buckets created for the stack were successfully removed.
+
+*Remember to shut down/remove all related resources once you are finished to avoid ongoing charges to your AWS account.*
 
 ## Architecture
 
@@ -84,17 +97,16 @@ The Elasticsearch cluster is secured in an Amazon VPC (Virtual Private Cloud) fo
 
 1. Head to the API Gateway console and click on your API Gateway resource
 2. Select the search GET method
-3. Click test and enter the search query q={query term}
+3. Click test and enter a search query q={query term}
 
 ## Suggestions
 
 Have other ideas for extensions we should build? Leave a comment on GitHub!
-
 
 ## Additions, forks, and contributions
 
 We are excited that you are interested in using the AWS Full-Stack Template! This is a great place to start if you are just beginning with AWS and want to get a functional application up and running. It is equally useful if you are looking for a sample full-stack application to fork off of and build your own custom application. We encourage developer participation via contributions and suggested additions. Of course you are welcome to create your own version!
 Please see the contributing guidelines (https://github.com/awslabs/aws-full-stack-template/blob/master/CONTRIBUTING.md) for more information.
 
-For just one example of how you can build on top of this, check out AWS Bookstore Demo App (available at https://github.com/aws-samples/aws-bookstore-demo-app), which was built on top of AWS Full Stack Template.
+For just one example of how you can build on top of this, check out AWS Bookstore Demo App (available at https://github.com/aws-samples/aws-bookstore-demo-app), which was built on top of AWS Full Stack Template and Search API extension.
 
