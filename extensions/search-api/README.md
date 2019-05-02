@@ -80,6 +80,12 @@ AWS Lambda is used in a few different places to run the application, as shown in
 
 The Elasticsearch cluster is secured in an Amazon VPC (Virtual Private Cloud) for production-level security. The Lambda functions interact with the cluster through an ENI (Elastic Network Interface) that is automatically setup for you. 
 
+## Using the extension
+
+1. Head to the API Gateway console and click on your API Gateway resource
+2. Select the search GET method
+3. Click test and enter the search query q={query term}
+
 ## Suggestions
 
 Have other ideas for extensions we should build? Leave a comment on GitHub!
