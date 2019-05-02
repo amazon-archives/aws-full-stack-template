@@ -53,9 +53,11 @@ To get the Search API Extension up and running in your AWS account, follow these
     4. After reviewing, check the blue box for creating IAM resources. 
 4. Choose Create stack. This will take ~15 minutes to complete. 
 5. After the stack completes, go to the Lambda console and find the Search function ([DynamoDBTableName]-Search)
-6. To achieve optimal performance, its best to query ElasticSearch on specific fields. Modify the fields array on line 24 with fields from your DynamoDB table to query on in the format of [column name].[type of DynamoDB column] (S, N, BOOL, etc)
+    1. Modify the fields array on line 24 with fields from your DynamoDB table to query on in the format of [column name].[column type] (S, N, BOOL, etc)
+    2. This allows us to achieve optimal performance as its best to query ElasticSearch on specific fields. 
+    3. If you are deploying this on top of the Full Stack app template with the existing goals schema, no additional modification is needed. 
 
-Note: As described in the limitations, this template does not backfill data to the ElasticSearch cluster. To test the extension, create a new item and see [Using the extension](#using-the-extension) for ways to test your Search API. 
+Note: As described in the [limitations](#limitations), this template does not backfill data to the ElasticSearch cluster. To test the extension, create a new item and see [Using the extension](#using-the-extension) for instructions on testing your Search API. 
 
 ### Cleaning up
 
@@ -87,7 +89,7 @@ GET /search/{:q} (Search)
 
 ### AWS Lambda
 
-AWS Lambda is used in a few different places to run the application, as shown in the architecture diagram. The important Lambda functions that are deployed as part of the template are shown below, and available in the functions (https://github.com/awslabs/aws-full-stack-template/blob/master/functions) folder. In the cases where the response fields are blank, the application will return a statusCode 200 or 500 for success or failure, respectively.
+AWS Lambda is used in a few different places to run the application, as shown in the architecture diagram. The important Lambda functions that are deployed as part of the template are shown below, and available in the [functions](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api/functions) folder. In the cases where the response fields are blank, the application will return a statusCode 200 or 500 for success or failure, respectively.
 
 *Search* - Lambda function that returns a list of books based on provided search parameters in the request. 
 
@@ -104,6 +106,10 @@ The Elasticsearch cluster is secured in an Amazon VPC (Virtual Private Cloud) fo
 3. Click test and enter a search query q={query term}
 
 ## Limitations 
+
+- This extension does not backfill your ElasticSearch cluster with previous data. Want to contribute? Leave us a comment or a PR request!
+- Upon the first use of a Lambda function, cold start times in a VPC can be slow. Once the Lambda function has been warmed up, performance will improve. Consider creating triggers to create your Lambda "warm" for production purposes.
+
 ## Suggestions
 
 Have other ideas for extensions we should build? Leave a comment on GitHub!
