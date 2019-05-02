@@ -1,0 +1,499 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  DynamoDBTable:
+    Description: Name of your existing DynamoDBTable
+    Type: String
+  ExistingAPIGatewayId:
+    Description: OPTIONAL - Specify an existing API Gateway ID to integrate with or we will auto-create an API Gateway Resource for you. 
+    Type: String
+Conditions:
+  IADRegion: !Equals [!Ref "AWS::Region", "us-east-1"]
+  CreateNewAPIGateway: !Equals [ !Ref ExistingAPIGatewayId, "" ]
+Mappings:
+
+  S3Buckets:
+    us-east-1:
+      Bucket: aws-dmas
+      SeederFunctionBucket: fsd-aws-wildrydes-us-east-1
+    us-west-2:
+      Bucket: aws-dmas-us-west-2
+      SeederFunctionBucket: fsd-aws-wildrydes-us-west-2
+    eu-central-1:
+      Bucket: aws-dmas-eu-central-1
+      SeederFunctionBucket: fsd-aws-wildrydes-eu-central-1
+    eu-west-1:
+      Bucket: aws-dmas-eu-west-1
+      SeederFunctionBucket: fsd-aws-wildrydes-eu-west-1
+  Constants:
+    S3Keys:
+      EnableStreamsCode: ddb-es/functions/EnableStreamsCode.zip
+      CreateESRoleCode: ddb-es/functions/CreateESRole.zip
+      UpdateSearchCode: ddb-es/functions/UpdateSearchCode.zip
+      SearchCode: ddb-es/functions/SearchCode.zip
+      GetAPIGatewayInfoCode: ddb-es/functions/GetAPIGatewayInfoCode.zip
+Metadata:
+  'AWS::CloudFormation::Designer':
+    82b269e2-158a-4a8c-9262-b695e74e50ea:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 251
+        'y': 103
+      z: 0
+      embeds: []
+Resources:
+  FunctionEnableStreams:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: !Sub '${DynamoDBTable}-EnableStreams'
+      Description: Enable streams for DynamoDB table
+      Handler: index.handler
+      Runtime: nodejs8.10
+      Role: !GetAtt 
+        - DynamoDBRole
+        - Arn
+      Timeout: 120
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoDBTable
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - EnableStreamsCode
+
+  RunEnableStreams:
+    Type: 'Custom::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt FunctionEnableStreams.Arn
+      ParameterOne: Parameter to pass into Custom Lambda Function
+      DependsOn: 
+       - FunctionEnableStreams
+       
+# ---------- ROLE FOR DYNAMODB ---------
+  DynamoDBRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${DynamoDBTable}-StreamingRole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: EnableStreamsPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'dynamodb:DescribeTable'
+                  - 'dynamodb:UpdateTable'
+                Resource: !Join [ "", [ "arn:aws:dynamodb:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId" , ":table/", !Ref DynamoDBTable ]]
+# ---------- ROLE FOR CREATING ELASTICSEARCH ROLE ---------
+  RoleForCreateESRoleFunction:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${DynamoDBTable}-RoleForCreateESRoleFunction'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: CreateRolePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'iam:CreateServiceLinkedRole'
+                Resource: 'arn:aws:iam::*:role/aws-service-role/es.amazonaws.com/AWSServiceRoleForAmazonElasticsearchService'
+  CreateESRoleFunction:
+    Properties:
+      Code:
+        S3Bucket: !FindInMap
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap
+          - Constants
+          - S3Keys
+          - CreateESRoleCode
+      Description: Create Elasticsearch role
+      Handler: index.handler
+      Role:
+        'Fn::GetAtt':
+          - RoleForCreateESRoleFunction
+          - Arn
+      Runtime: nodejs8.10
+      Timeout: 300
+    Type: 'AWS::Lambda::Function'
+  ESRoleCreator:
+    Type: 'Custom::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt CreateESRoleFunction.Arn
+      ParameterOne: Parameter to pass into Custom Lambda Function
+      DependsOn: CreateESRoleFunction
+  # ---------- VPC - SUBNET - SECURITY GROUPS  ---------
+  VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: '172.31.0.0/16'
+  VPCSubnetforES: 
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      CidrBlock:
+        Fn::Select:
+          - 0
+          - Fn::Cidr:
+            - Fn::GetAtt: [VPC, CidrBlock]
+            - 3
+            - 8
+      VpcId:
+        Ref: VPC
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs:
+              Ref: "AWS::Region"
+  ElasticsearchDomain:
+    Type: 'AWS::Elasticsearch::Domain'
+    DependsOn:
+      - ESRoleCreator
+    # TODO: Dev and Prod recommended settings
+    Properties:
+      DomainName: !Ref DynamoDBTable
+      ElasticsearchVersion: 6.5
+      ElasticsearchClusterConfig:
+        DedicatedMasterEnabled: 'false'
+        InstanceCount: '1'
+        ZoneAwarenessEnabled: 'false'
+        InstanceType: t2.small.elasticsearch
+      VPCOptions:
+        SubnetIds:
+          - Ref: VPCSubnetforES
+      EBSOptions:
+        EBSEnabled: true
+        Iops: 0
+        VolumeSize: 10
+        VolumeType: gp2
+      NodeToNodeEncryptionOptions:
+        Enabled: true
+      AccessPolicies:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: '*'
+            Action:
+              - 'es:*'
+            Resource: !Join [ "", [ "arn:aws:es:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId" , ":domain/", !Ref DynamoDBTable, "/*" ]]
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: true
+
+# ---------- LAMBDA FUNCTION AND ROLE FOR ELASTICSEARCH   ---------  
+  StreamingAndSearchRole:
+      Type: 'AWS::IAM::Role'
+      Properties:
+        RoleName: !Sub '${DynamoDBTable}-StreamingAndSearchRole'
+        AssumeRolePolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - 'sts:AssumeRole'
+        Path: /
+        ManagedPolicyArns:
+          - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+          - 'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+        Policies:
+          - PolicyName: !Sub '${DynamoDBTable}-lambda-policy'
+            PolicyDocument:
+              Version: 2012-10-17
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - 'es:ESHttpPost'
+                    - 'es:ESHttpGet'
+                  Resource: !Join [ "", [ "arn:aws:es:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId" , ":domain/", !Ref ElasticsearchDomain, "/*"]]
+                - Effect: Allow
+                  Action:
+                    - 'dynamodb:DescribeStream'
+                    - 'dynamodb:GetRecords'
+                    - 'dynamodb:GetShardIterator'
+                    - 'dynamodb:ListStreams'
+                  Resource: !Join [ "", [ "arn:aws:dynamodb:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId" , ":table/", !Ref DynamoDBTable, "/stream/*"]]
+  UpdateSearchCluster:
+      Type: 'AWS::Lambda::Function'
+      DependsOn:
+        - StreamingAndSearchRole
+        - ElasticsearchDomain
+      Properties:
+        FunctionName: !Sub '${DynamoDBTable}-UpdateSearchCluster'
+        Description: 'Update Elasticsearch cluster as books are added'
+        Handler: index.handler
+        Role: !GetAtt 
+          - StreamingAndSearchRole
+          - Arn
+        Runtime: python2.7
+        Timeout: '60'
+        VpcConfig:
+          SecurityGroupIds:
+            - Fn::GetAtt: [VPC, DefaultSecurityGroup]
+          SubnetIds:
+            - Ref: VPCSubnetforES
+        Code:
+          S3Bucket: !FindInMap 
+            - S3Buckets
+            - !Ref 'AWS::Region'
+            - Bucket
+          S3Key: !FindInMap 
+            - Constants
+            - S3Keys
+            - UpdateSearchCode
+        Environment:
+          Variables:
+            ESENDPOINT: !GetAtt 
+              - ElasticsearchDomain
+              - DomainEndpoint
+            REGION: !Ref 'AWS::Region' 
+  FunctionSearch:
+    Type: 'AWS::Lambda::Function'
+    DependsOn:
+      - StreamingAndSearchRole
+      - ElasticsearchDomain
+    Properties:
+      FunctionName: !Sub '${DynamoDBTable}-Search'
+      Description: Lambda function to query ElasticSearch
+      Handler: index.handler
+      MemorySize: 256
+      Role: !GetAtt 
+        - StreamingAndSearchRole
+        - Arn
+      Runtime: python2.7
+      Timeout: '60'
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::GetAtt: [VPC, DefaultSecurityGroup]
+        SubnetIds:
+          - Ref: VPCSubnetforES
+      Code:
+        S3Bucket: !FindInMap
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap
+          - Constants
+          - S3Keys
+          - SearchCode
+      Environment:
+        Variables:
+          ESENDPOINT: !GetAtt
+            - ElasticsearchDomain
+            - DomainEndpoint
+          REGION: !Ref 'AWS::Region'
+
+# ----------  STREAMING TRIGGERS ---------                     
+  DataTableStream:
+    DependsOn:
+      - UpdateSearchCluster
+      - FunctionEnableStreams
+      - RunEnableStreams
+    Type: 'AWS::Lambda::EventSourceMapping'
+    Properties:
+      BatchSize: 1
+      Enabled: true
+      EventSourceArn: !GetAtt
+        - RunEnableStreams
+        - StreamArn
+      FunctionName: !GetAtt 
+        - UpdateSearchCluster
+        - Arn
+      StartingPosition: TRIM_HORIZON
+
+ # ----------  SEARCH API ---------                     
+  FunctionSearchPermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref FunctionSearch
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join [ "", [ "arn:aws:execute-api:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId" , ":",  !If [CreateNewAPIGateway, !Ref NewAPIGateway, !Ref ExistingAPIGatewayId], "/*"]]
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 06a821b7-638e-471c-ab50-51710b73767c
+  SearchApiResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !If [CreateNewAPIGateway, !Ref NewAPIGateway, !Ref ExistingAPIGatewayId]
+      ParentId: !GetAtt
+        - RunGetAPIGatewayInfo
+        - RootResourceId
+      PathPart: search
+  SearchApiRequestGET:
+    DependsOn: 
+      - FunctionSearchPermissions
+      - FunctionSearch
+      - SearchApiResource
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: AWS_IAM
+      HttpMethod: GET
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join 
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - ':lambda:path/2015-03-31/functions/'
+            - !GetAtt 
+              - FunctionSearch
+              - Arn
+            - /invocations
+        IntegrationResponses:
+          - StatusCode: 200
+      RequestParameters:
+        method.request.querystring.q: false
+      ResourceId: !Ref SearchApiResource
+      RestApiId: !If [CreateNewAPIGateway, !Ref NewAPIGateway, !Ref ExistingAPIGatewayId]
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: Empty
+  SearchApiRequestOPTIONS:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      ResourceId: !Ref SearchApiResource
+      RestApiId: !If [CreateNewAPIGateway, !Ref NewAPIGateway, !Ref ExistingAPIGatewayId]
+      AuthorizationType: None
+      HttpMethod: OPTIONS
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: >-
+                'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+              method.response.header.Access-Control-Allow-Methods: '''GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH'''
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: ''
+            StatusCode: '200'
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+        - ResponseModels:
+            application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: '200'
+
+ # ----------  NEW API GATEWAY [OPTIONAL] ---------                     
+  NewAPIGateway:
+    Type: 'AWS::ApiGateway::RestApi'
+    Condition: CreateNewAPIGateway
+    Properties:
+      Name: !Sub '${DynamoDBTable}-Search'
+      Description: Search API
+      FailOnWarnings: true
+
+  APIDeployment:
+    DependsOn:
+      - SearchApiRequestGET
+      - SearchApiRequestOPTIONS
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      Description: Prod deployment for API
+      RestApiId: !If [CreateNewAPIGateway, !Ref NewAPIGateway, !Ref ExistingAPIGatewayId]
+      StageName: prod
+
+ # ----------  RETRIEVE API GATEWAY INFO ---------                     
+  FunctionGetAPIGatewayInfo:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: !Sub '${DynamoDBTable}-APIGatewayInfo'
+      Description: Retrieve info about API Gateway resource
+      Handler: index.handler
+      Runtime: nodejs8.10
+      Role: !GetAtt 
+        - GetAPIGatewayInfoRole
+        - Arn
+      Timeout: 120
+      Environment:
+        Variables:
+          REST_API_ID: !If [CreateNewAPIGateway, !Ref NewAPIGateway, !Ref ExistingAPIGatewayId]
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - GetAPIGatewayInfoCode
+
+  RunGetAPIGatewayInfo:
+    Type: 'Custom::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt FunctionGetAPIGatewayInfo.Arn
+      ParameterOne: Parameter to pass into Custom Lambda Function
+      DependsOn: 
+       - FunctionGetAPIGatewayInfo
+  GetAPIGatewayInfoRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${DynamoDBTable}-APIGatewayInfo'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: GetAPIInfo
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'apigateway:GET'
+                Resource: !Join [ "", [ "arn:aws:apigateway:", !Ref "AWS::Region", "::/restapis/", !If [CreateNewAPIGateway, !Ref NewAPIGateway, !Ref ExistingAPIGatewayId], "/*"]]
+Outputs:
+  ElasticsearchEndpoint:
+    Description: The Elasticsearch domain endpoint that you use to submit search requests.
+    Value: !GetAtt ElasticsearchDomain.DomainEndpoint
+  SearchAPI:
+    Description: Seach API endpoint.
+    Export:
+      Name: !Sub '${DynamoDBTable}SearchAPI'
+    Value: !Join [ "", [ "https://", !If [CreateNewAPIGateway, !Ref NewAPIGateway, !Ref ExistingAPIGatewayId], ".execute-api.", !Ref "AWS::Region", ".amazonaws.com/prod"]]
