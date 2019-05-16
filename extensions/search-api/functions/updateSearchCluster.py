@@ -24,10 +24,13 @@ def handler(event, context):
         # Generate a UUID from the item primary key for use as the Elasticsearch ID
         id = generateUUID(record)
 
-        document = record["dynamodb"]["NewImage"]
-        print(document)
-        r = requests.put(url + id, auth=awsauth, json=document, headers=headers)
+        if record['eventName'] == 'REMOVE':
+            r = requests.delete(url + id, auth=awsauth)
+        else:
+            document = record['dynamodb']['NewImage']
+            r = requests.put(url + id, auth=awsauth, json=document, headers=headers)
         count += 1
+
     return str(count) + " records processed."
 
 def generateUUID(record):
