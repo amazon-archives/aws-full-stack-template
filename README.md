@@ -27,6 +27,7 @@ This sample code is made available under a modified MIT license. See the LICENSE
   - [Amazon Cloudfront and Amazon S3](#amazon-cloudfront-and-amazon-s3)
   - [Amazon Cloudwatch](#amazon-cloudwatch)
   - [AWS CodeCommit, AWS CodePipeline, AWS CodeBuild](#aws-codecommit-aws-codepipeline-aws-codebuild)
+- [Running your web application locally](#running-your-web-application-locally)
 - [Considerations for demo purposes](#considerations-for-demo-purposes)
 - [Known limitations](#known-limitations)
 - [Additions, forks, and contributions](#additions-forks-and-contributions)
@@ -347,6 +348,31 @@ Similar to CloudWatch, the capabilities provided by CodeCommit, CodePipeline, an
 
 &nbsp;
 
+## Running your web application locally
+
+1. If you haven't setup Git credentials for AWS CodeCommit before, head to the IAM Console. If you have already you can skip to step 5. 
+2. Click on your IAM user.
+3. Click on the **Security credentials tab**. Scroll to the bottom and click **Generate** underneath the **HTTPS Git credentials for AWS CodeCommit**.
+4. Download and save these credentials. You will use these credentials when cloning your repository. 
+&nbsp;
+
+5. Go to the CodeCommit console and find your code repository.
+5. Click the HTTPS button underneath the **Clone URL** column. 
+6. Open up your terminal, type `git clone ` paste the Clone URL and hit enter. 
+&nbsp;
+
+7. Once the repository has created, run `npm install`. 
+8. After all dependencies have been downloaded, run `npm run start`.
+&nbsp;
+
+Your done! Any future updates you make to your repository get pushed to your code pipeline automatically and published to your web application endpoint. 
+
+&nbsp;
+
+---
+
+&nbsp;
+
 ## Considerations for demo purposes
 
 1. Web assets (pages, images, etc.) are pulled from a public S3 bucket via the CloudFormation template to create the frontend for the AWS Full-Stack Template.  When building your own web application (or customizing this one), you will likely pull from your own S3 buckets.  If you customize the lambda functions, you will want to store these separately, as well.
@@ -369,26 +395,6 @@ Similar to CloudWatch, the capabilities provided by CodeCommit, CodePipeline, an
 ---
 
 &nbsp;
-
-## Running your web application locally
-
-1. If you haven't setup Git credentials for AWS CodeCommit before, head to the IAM Console. If you have already you can skip to step 5. 
-2. Click on your IAM user.
-3. Click on the **Security credentials tab**. Scroll to the bottom and click **Generate** underneath the **HTTPS Git credentials for AWS CodeCommit**.
-4. Download and save these credentials. You will use these credentials when cloning your repository. 
-&nbsp;
-
-5. Go to the CodeCommit console and find your code repository.
-5. Click the HTTPS button underneath the **Clone URL** column. 
-6. Open up your terminal, type `git clone ` paste the Clone URL and hit enter. 
-&nbsp;
-
-7. Once the repository has created, run `npm install`. 
-8. After all dependencies have been downloaded, run `npm run start`.
-&nbsp;
-
-Your done! Any future updates you make to your repository get pushed to your code pipeline automatically and published to your web application endpoint. 
-
 
 ## Additions, forks, and contributions
 
