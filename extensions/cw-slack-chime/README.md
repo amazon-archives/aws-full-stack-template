@@ -43,7 +43,7 @@ To get the CloudWatch alarm to Slack or Chime Extension up and running in your A
 
 1. Log into the AWS console (https://console.aws.amazon.com/) (if you are not already logged in)
 2. Choose Launch Stack to open the AWS CloudFormation console and create a new stack.
-[![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=SearchAPI&templateURL=https://aws-dmas.s3.amazonaws.com/alarm-to-alert/master.yaml)
+[![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=CWToSlack&templateURL=https://aws-dmas.s3.amazonaws.com/alarm-to-alert/master.yaml)
 
 3. Continue through the CloudFormation wizard steps
     1. Name your stack, e.g. CWToSlack
