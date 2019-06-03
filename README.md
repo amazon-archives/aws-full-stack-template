@@ -31,6 +31,7 @@ This sample code is made available under a modified MIT license. See the LICENSE
 - [Considerations for demo purposes](#considerations-for-demo-purposes)
 - [Known limitations](#known-limitations)
 - [Additions, forks, and contributions](#additions-forks-and-contributions)
+- [Extensions](#extensions)
 - [Questions and contact](#questions-and-contact)
 
 &nbsp;
@@ -58,6 +59,8 @@ The provided CloudFormation template automates the entire creation and deploymen
 You can choose to customize the template to create your own goals app, modify it to make a different type of simple notes or to-do application, or add onto it to make a completely different type of web application.  
 
 Users can build on top of AWS Full-Stack Template to create any application they envision, whether a travel booking tool, a blog, or another web app. The **AWS Bookstore Demo App** (available at [https://github.com/aws-samples/aws-bookstore-demo-app](https://github.com/aws-samples/aws-bookstore-demo-app)) is just one full-fledged example of what you might create using AWS Full-Stack Template. 
+
+Once you've set up AWS Full-Stack Template, check out how you can build on top of it with [Extensions](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions)
 
 &nbsp;
 
@@ -342,12 +345,6 @@ The capabilities provided by CloudWatch are not exposed to the end users of the 
 
 Similar to CloudWatch, the capabilities provided by CodeCommit, CodePipeline, and CodeBuild are not exposed to the end users of the web app.  The developer/administrator can use these tools to help stage and deploy the application as it is updated and improved.
 
-&nbsp;
-
----
-
-&nbsp;
-
 ## Running your web application locally
 
 1. If you haven't setup Git credentials for AWS CodeCommit before, head to the IAM Console. If you have already you can skip to step 5. 
@@ -377,24 +374,12 @@ Your done! Any future updates you make to your repository get pushed to your cod
 
 1. Web assets (pages, images, etc.) are pulled from a public S3 bucket via the CloudFormation template to create the frontend for the AWS Full-Stack Template.  When building your own web application (or customizing this one), you will likely pull from your own S3 buckets.  If you customize the lambda functions, you will want to store these separately, as well.
 
-&nbsp;
-
----
-
-&nbsp;
-
 ## Known limitations
 
 * The application was written for demonstration purposes and not for production use.
 * Validation is working properly from an end-user standpoint, but is not cleanly implemented. For instance, the submit buttons (to create a goal, update a goal, login, signup, and enter confirmation code) are disabled (as designed) when validation fails, but we added an extra helper function to support this.  This issue occured when the app was upgraded to Bootstrap 4.  We plan to fix this in a future revision.
 * In today's implementation, we have all of the Lambda functions associated with one IAM role.  Ideally, each Lambda function would have its own scoped-down IAM role and policies.
 * Upon the first use of a Lambda function, cold start times can be slow. Once the Lambda function has been warmed up, performance will improve.  
-
-&nbsp;
-
----
-
-&nbsp;
 
 ## Additions, forks, and contributions
 
@@ -404,11 +389,11 @@ Please see the [contributing guidelines](CONTRIBUTING.md) for more information.
 
 For just one example of how you can build on top of this, check out **AWS Bookstore Demo App** (available at [https://github.com/aws-samples/aws-bookstore-demo-app](https://github.com/aws-samples/aws-bookstore-demo-app)), which was built on top of AWS Full Stack Template.
 
-&nbsp;
+## Extensions
 
----
+Are you looking for a few extensions that you can use to build on top of the Full-Stack ecosystem?  Check them out in the [Extensions](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions) folder!
 
-&nbsp;
+Want to contribute an extension?  Leave us a comment or submit a PR!
 
 ## Questions and contact
 
