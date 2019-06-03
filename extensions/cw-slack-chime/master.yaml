@@ -1,0 +1,166 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  CloudwatchAlarm:
+    Description: Name of the Cloudwatch Alarm
+    Type: String
+  WebhookURL:
+    Description: Webhook URL to call
+    Type: String
+  WebhookType: 
+    Type: String
+    Default: Slack
+    AllowedValues: 
+      - Slack
+      - Chime
+    Description: Select the destination of your webhook
+Conditions:
+  IsSlack: !Equals [!Ref WebhookType, "Slack"]
+Mappings:
+  S3Buckets:
+    us-east-1:
+      Bucket: aws-dmas
+    us-west-2:
+      Bucket: aws-dmas-us-west-2
+    eu-central-1:
+      Bucket: aws-dmas-eu-central-1
+    eu-west-1:
+      Bucket: aws-dmas-eu-west-1
+  Constants:
+    S3Keys:
+      SendAlertCode: alarm-to-alert/functions/SendAlertCode.zip
+      SetupAlertCode: alarm-to-alert/functions/SetupAlertCode.zip
+Resources:
+  FunctionSendAlert:
+    Type: 'AWS::Lambda::Function'
+    DependsOn: WebhookRole
+    Properties:
+      FunctionName: !Sub '${CloudwatchAlarm}-SendAlert'
+      Description: Sends message when CloudWatch Alarm is triggered
+      Handler:  !Join
+        - ''
+        - - !If [IsSlack, 'slack', 'chime']
+          - '.handler'
+      Runtime: nodejs8.10
+      Role: !GetAtt 
+        - WebhookRole
+        - Arn
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          WEBHOOK_URL: !Ref WebhookURL
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - SendAlertCode
+  SNSTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      TopicName: !Sub '${CloudwatchAlarm}-topic-${WebhookType}'
+      Subscription:
+        - Endpoint: !GetAtt FunctionSendAlert.Arn
+          Protocol: lambda
+    DependsOn: FunctionSendAlert
+  SendAlertPermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn: !Ref SNSTopic
+      FunctionName: !GetAtt FunctionSendAlert.Arn     
+    DependsOn: FunctionSendAlert
+  WebhookRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${CloudwatchAlarm}-WebhookRole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+  SetupAlertRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub '${CloudwatchAlarm}-SetupAlertRole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: !Sub '${CloudwatchAlarm}-policy'
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'cloudwatch:PutMetricAlarm'
+                  - 'cloudwatch:DescribeAlarms'
+                Resource: !Join [ "", [ "arn:aws:cloudwatch:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId" , ":alarm:", !Ref CloudwatchAlarm ]]
+  FunctionSetupAlert:
+    Type: 'AWS::Lambda::Function'
+    DependsOn: 
+      - SetupAlertRole
+      - SNSTopic
+    Properties:
+      FunctionName: !Sub '${CloudwatchAlarm}-FunctionSetupAlert'
+      Description: Setup subscription to alarm with SNS and trigger Send to Alert Lambda function. 
+      Handler: index.handler
+      Runtime: nodejs8.10
+      Role: !GetAtt 
+        - SetupAlertRole
+        - Arn
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          ALARM_NAME: !Ref CloudwatchAlarm
+          SNS_TOPIC: !Ref SNSTopic
+      Code:
+        S3Bucket: !FindInMap 
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap 
+          - Constants
+          - S3Keys
+          - SetupAlertCode
+  SetupAlertPermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: "lambda:InvokeFunction"
+      Principal: "cloudwatch.amazonaws.com"
+      SourceArn: !Join [ "", [ "arn:aws:cloudwatch:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId" , ":alarm:", !Ref CloudwatchAlarm ]]
+      FunctionName: !GetAtt FunctionSetupAlert.Arn     
+    DependsOn: FunctionSetupAlert
+  RunSetupAlert:
+    Type: 'Custom::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt FunctionSetupAlert.Arn
+      DependsOn: FunctionSetupAlert
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 63b08124-fccb-4874-ab13-ce6cfe6ce885
+Outputs:
+  LambdaFunction:
+    Description: Lambda function that sends a message when CloudWatch Alarm is triggered.
+    Export:
+      Name: !Sub '${CloudwatchAlarm}SendAlert'
+    Value: !Ref FunctionSendAlert
