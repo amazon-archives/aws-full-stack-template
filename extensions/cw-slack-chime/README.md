@@ -17,8 +17,7 @@ This sample code is made available under a modified MIT license. See the LICENSE
   - [Cleaning up](#cleaning-up)
 - [Architecture](#architecture)
 - [Implementation details](#implementation-details)
-  - [Amazon DynamoDB](#amazon-dynamodb-streams)
-  - [Amazon API Gateway](#amazon-api-gateway)
+  - [Amazon SNS](#amazon-sns)
   - [AWS Lambda](#aws-lambda)
 - [Using the extension](#using-the-extension)
 - [Limitations](#limitations)
@@ -83,15 +82,10 @@ Amazon Simple Notification Service is a managed pub/sub messaging service we use
 
 ### AWS Lambda
 
-AWS Lambda is used to process the CloudWatch alarm message and send a message to the Slack/Chime channel, as shown in the architecture diagram. The important Lambda functions that are deployed as part of the template are shown below, and available in the [functions](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api/functions) folder. In the cases where the response fields are blank, the application will return a statusCode 200 or 500 for success or failure, respectively.
+AWS Lambda is used in a few different places to run the application. The Lambda functions that are deployed as part of the template are shown below, and available in the [functions](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/cw-slack-chime/functions) folder.
 
-*[CloudWatch Alarm Name]-SendAlert* - Lambda function that calls the configured Slack/Chime webhook URL. 
-
-## Using the extension
-
-1. Head to the API Gateway console and click on your API Gateway resource
-2. Select the search GET method
-3. Click test and enter a search query q={query term}
+*[CloudWatch Alarm Name]-SendAlert* - Lambda function processes the CloudWatch alarm message and calls the configured Slack/Chime webhook URL. 
+*[CloudWatch Alarm Name]-FunctionSetupAlert* - Lambda function that intakes the newly created SNS topic and adds it as an action to your CloudWatch alarm. 
 
 ## Limitations 
 
