@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const cw = new AWS.CloudWatch();
+const sns = new AWS.SNS();
 const https = require('https');
 const url = require('url');
 
@@ -58,7 +59,7 @@ function modifyAlertAndSubscribe(event, callback, context, data) {
 
     return cw.putMetricAlarm(params).promise().then(function (data) {
       console.log(data);
-      sendResponse(event, callback, context.logStreamName, SUCCESS);
+      confirmAlert(event, callback, context);
     }).catch(function (err) {
       var responseData = { Error: "Failed to modify alarm and subscribe SNS topic" + err };
       sendResponse(event, callback, context.logStreamName, FAILED, responseData);
@@ -93,6 +94,22 @@ function removeSubscription(event, callback, context, data) {
       sendResponse(event, callback, context.logStreamName, FAILED, responseData);
     });
   }
+}
+
+function confirmAlert(event, callback, context) {
+  const message = { "AlarmName": process.env.ALARM_NAME, "AlarmDescription": null, "AWSAccountId": "XXX", "NewStateValue": "ALARM", "NewStateReason": "", "StateChangeTime": new Date().toISOString(), "Region": process.env.AWS_REGION, "OldStateValue": "", "Trigger": { "MetricName": "Ready!", "Namespace": "AWS", "StatisticType": "", "Statistic": "", "Unit": null, "Dimensions": [{ "name": "Currency", "value": "USD" }], "Period": 86400, "EvaluationPeriods": 1, "ComparisonOperator": "GreaterThanThreshold", "Threshold": 1.0, "TreatMissingData": "", "EvaluateLowSampleCountPercentile": "", "Timestamp": "2017-10-30T13: 20: 35.855Z", "SignatureVersion": "1", "Signature": "", "SigningCertUrl": "", "UnsubscribeUrl": "", "MessageAttributes": null } };
+
+  var params = {
+    Message: JSON.stringify(message),
+    TopicArn: process.env.SNS_TOPIC
+  };
+
+  sns.publish(params).promise().then(function (data) {
+    sendResponse(event, callback, context.logStreamName, SUCCESS);
+  }).catch(function (err) {
+    var responseData = { Error: "Failed to send test message" + err };
+    sendResponse(event, callback, context.logStreamName, FAILED, responseData);
+  });
 }
 
 function sendResponse(event, callback, logStreamName, responseStatus, responseData) {
