@@ -26,6 +26,14 @@ exports.handler = function (event, context) {
           value: new Date(message.StateChangeTime).toGMTString(),
           short: true,
         }, {
+          title: 'Namespace',
+          value: message.Trigger.Namespace,
+          short: true,
+        }, {
+          title: 'MetricName',
+          value: message.Trigger.MetricName,
+          short: true,
+        }, {
           title: 'Account',
           value: message.AWSAccountId,
           short: true,
