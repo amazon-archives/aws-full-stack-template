@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect } from 'react-router';
-import { Form, FormGroup, FormControl, FormLabel, Button, Spinner, FormControlProps, FormProps } from "react-bootstrap";
-import { Auth } from "aws-amplify";
+import { Form, FormGroup, FormControl, FormLabel, Button, Spinner, FormControlProps } from "react-bootstrap";
+import Auth from "@aws-amplify/auth";
 import "./login.css";
 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

@@ -1,4 +1,4 @@
-import { Auth } from "aws-amplify";
+import Auth from "@aws-amplify/auth";
 import React from "react";
 import { Redirect } from 'react-router';
 import { Form, FormGroup, FormControl, FormLabel, Button, Spinner, FormControlProps } from "react-bootstrap";

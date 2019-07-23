@@ -1,4 +1,4 @@
-import { Auth } from "aws-amplify";
+import Auth from "@aws-amplify/auth";
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { Form, Nav, Navbar, Button } from "react-bootstrap";

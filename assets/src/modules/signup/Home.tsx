@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button, Table, Spinner } from "react-bootstrap";
-import { API } from "aws-amplify";
+import API from "@aws-amplify/api";
 import { Redirect } from "react-router-dom";
 
 import fullStack from "../../images/full-stack.png";
@@ -93,7 +93,7 @@ export default class Home extends Component<HomeProps, HomeState> {
         <Table variant="dark'">
           <thead>
             <tr>
-              <th>Title</th>
+              <th>Goal name</th>
               <th>Description</th>
               <th>Date created</th>
             </tr>

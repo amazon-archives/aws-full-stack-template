@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { API } from "aws-amplify";
+import API from "@aws-amplify/api";
 import { Button, FormGroup, FormControl, Modal, FormLabel, Spinner, Form } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 
@@ -195,7 +195,7 @@ export default class AddEditGoal extends Component<AddEditGoalProps, AddEditGoal
 
             <div className="form-body">
               <FormGroup className="blinking-cursor">
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Goal title</FormLabel>
                 <FormControl id="title"
                   onChange={this.handleChange}
                   value={goal.title}
@@ -206,7 +206,7 @@ export default class AddEditGoal extends Component<AddEditGoalProps, AddEditGoal
               </FormGroup>
 
               <FormGroup >
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Goal description</FormLabel>
                 <FormControl id="content"
                   onChange={this.handleChange}
                   value={goal.content}
