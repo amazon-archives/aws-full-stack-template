@@ -16,13 +16,13 @@ This sample code is made available under a modified MIT license. See the LICENSE
   - [Section 1: Get to know the app](#section-1-get-to-know-the-app)
   - [Section 2: Explore the backend](#section-2-explore-the-backend)
   - [Section 3: Add on to the application](#section-3-add-on-to-the-application)
-- [Part 2: AWS Bookstore Demo App](#part-2-aws-bookstore-demo-app)
+- [Part 2: Extensions](#part-2-extensions)
+  - [Section 1: Deploy a search extension to AWS Full-Stack Template](#section-1-deploy-a-search-extension-to-aws-full-stack-template)
+  - [Section 2: Build your own extension! (optional)](#section-2-build-your-own-extension-optional)
+- [Part 3: AWS Bookstore Demo App](#part-3-aws-bookstore-demo-app)
   - [Section 1: Get to know the app](#section-1-get-to-know-the-app-1)
   - [Section 2: Explore the backend](#section-2-explore-the-backend-1)
   - [Section 3: Change the application (optional)](#section-3-change-the-application-optional)
-- [Part 3: Extensions](#part-3-extensions)
-  - [Section 1: Deploy a search extension to AWS Full-Stack Template](#section-1-deploy-a-search-extension-to-aws-full-stack-template)
-  - [Section 2: Build your own extension! (optional)](#section-2-build-your-own-extension-optional)
 - [Part 4: Cleanup!](#part-4-cleanup)
 - [Part 5: Build on!](#part-5-build-on)
 - [Questions and contact](#questions-and-contact)
@@ -129,7 +129,7 @@ Wait a few minutes for the change to go through, and refresh your goals app.  Wh
 
 ## End of Part 1
 
-You finished Part 1 of the workshop!  If you do not plan to immediately continue to **Part 2: AWS Bookstore Demo App**, please skip ahead to **Part 4: Cleanup!**
+You finished Part 1 of the workshop!  If you do not plan to immediately continue to **Part 2: Extensions** or **Part 3: AWS Bookstore Demo App**, please skip ahead to **Part 4: Cleanup!**
 
 &nbsp;
 
@@ -137,7 +137,79 @@ You finished Part 1 of the workshop!  If you do not plan to immediately continue
 
 &nbsp;
 
-## Part 2: AWS Bookstore Demo App
+## Part 2: Extensions
+
+
+### Section 1: Deploy a search extension to AWS Full-Stack Template
+
+### Getting started
+
+In this section, you will start with the application you deployed in **Part 1** with AWS Full-Stack Template and deploy an extension (via CloudFormation) to add onto the application.  The purpose of this section is to illustrate how you can take a basic application like the Goals app and turn it into something different by adding components.
+
+#### Step 1: Deploy the search extension in your AWS account
+
+Following the same guidelines for CloudFormation as in Part 1 of this workshop, create a new stack, and use the template provided in the [**Extensions** folder](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api) to add search capabilities to the Goals app via Elasticsearch service.  Deploy the extension.
+
+#### Step 2: Play with the search capability
+
+Now that you've deployed the search extension, let's test it to make sure search results are being returned properly. 
+
+Open the DynamoDB console and find the table associated with your goals.  Go to the items tab and choose one of the items (a goal).  Copy the userID and the title of the goal and make a note of them for use in a minute.  
+
+In a new tab, open the Lambda console and look for the search function that was created as part of the extension you just ran in CloudFormation.  It should be titled "yourextensionprojectname-Search."  Open the Lambda function, choose the "Select a test event" dropdown towards the top, and choose "Configure test events."  In the "Event template" dropdown, choose "Amazon API Gateway AWS Proxy."  Here we are setting up a test for our search extension.
+
+Next, enter an event name (e.g. searchtest) and change the following lines of code from:
+
+```js
+"queryStringParameters": {
+    "foo": bar
+  },
+```
+to:
+```js
+"queryStringParameters": {
+    "q": title of your goal
+  },
+```
+where "title of your goal" is the goal title you made a note of earlier (or perhaps one word of your goal title).  This is simulating the string that you might put into a search bar.
+
+Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.
+
+#### Step 3: Add a search bar to the goals app *(optional)*
+
+If you would like, you can go even further by integrating the search functionality into the frontend application.  Feel free to explore how AWS Bookstore Demo App did this, or experiment!
+
+
+### Section 2: Build your own extension! *(optional)*
+
+In this section, you will try to build your own extension on top of an existing application.  
+
+#### Step 1: Tear apart the search extension in Section 1
+
+In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 3, Section 1.  Open the CloudFormation template and understand the different elements that are being deployed.  Open the Lambda functions to explore the logic for how/when conditional checks are made.
+
+#### Step 2: Decide what type of extension you want to build
+
+We decided to build a search extension to add search functionality on top of any application.  What will you come up with?  You could build a caching extension, a visualization extension, or something else.  What feature do you wish your web app had?  Let your imagination run wild.
+
+#### Step 3: Build your extension
+
+Following the generic structure of the search extension, build a CloudFormation template that will add your extension on top of an existing application.  Let us know what you built!
+
+
+## End of Part 2
+
+You finished Part 2 of the workshop! If you would like to save your work, please do so!  If you are interested in sharing your work, please see **Part 5: Build on!** for how you might contribute additions and ideas to either AWS Full-Stack Template or AWS Bookstore Demo App.  
+
+Don't forget to finish **Part 4: Cleanup!** to avoid ongoing charges to your AWS account.
+
+&nbsp;
+
+---
+
+&nbsp;
+
+## Part 3: AWS Bookstore Demo App
 
 In this part of the workshop, you will spin up a complete instance of [AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app), understand the application architecture, manually change some components, and explore adding additions.  If you just completed **Part 1: AWS Full-Stack Template**, some of these instructions will be repetitive.
 
@@ -221,78 +293,6 @@ Perhaps you want to use a different database for your product catalog (i.e. Amaz
 #### Option 5: Build out the “Friends” functionality in the Bookstore *(hardest)*
 
 One of the main items that is missing from the current AWS Bookstore Demo App implementation is that there is no way to manage (view, add, remove) your friends.  Build a friends management system and add it into the bookstore.
-
-
-## End of Part 2
-
-You finished Part 2 of the workshop! If you do not plan to immediately continue to **Part 3: Extensions** and explore deploying (and maybe even creating) extensions to your applications, please skip ahead to **Part 4: Cleanup!**
-
-&nbsp;
-
----
-
-&nbsp;
-
-## Part 3: Extensions
-
-
-### Section 1: Deploy a search extension to AWS Full-Stack Template
-
-### Getting started
-
-In this section, you will start with the application you deployed in **Part 1** with AWS Full-Stack Template and deploy an extension (via CloudFormation) to add onto the application.  The purpose of this section is to illustrate how you can take a basic application like the Goals app and turn it into something different by adding components.
-
-#### Step 1: Deploy the search extension in your AWS account
-
-Following the same guidelines for CloudFormation as in Part 1 and Part 2 of this workshop, create a new stack, and use the template provided in the **Extensions** folder in the GitHub repo for AWS Full-Stack Template to add search capabilities to the Goals app via Elasticsearch service.  Deploy the extension.
-
-[![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=SearchExtension&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml)
-
-#### Step 2: Play with the search capability
-
-Now that you've deployed the search extension, let's test it to make sure search results are being returned properly. 
-
-Open the DynamoDB console and find the table associated with your goals.  Go to the items tab and choose one of the items (a goal).  Copy the userID and the title of the goal and make a note of them for use in a minute.  
-
-In a new tab, open the Lambda console and look for the search function that was created as part of the extension you just ran in CloudFormation.  It should be titled "yourextensionprojectname-Search."  Open the Lambda function, choose the "Select a test event" dropdown towards the top, and choose "Configure test events."  In the "Event template" dropdown, choose "Amazon API Gateway AWS Proxy."  Here we are setting up a test for our search extension.
-
-Next, enter an event name (e.g. searchtest) and change the following lines of code from:
-
-```js
-"queryStringParameters": {
-    "foo": bar
-  },
-```
-to:
-```js
-"queryStringParameters": {
-    "q": title of your goal
-  },
-```
-where "title of your goal" is the goal title you made a note of earlier (or perhaps one word of your goal title).  This is simulating the string that you might put into a search bar.
-
-Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.
-
-#### Step 3: Add a search bar to the goals app *(optional)*
-
-If you would like, you can go even further by integrating the search functionality into the frontend application.  Feel free to explore how AWS Bookstore Demo App did this, or experiment!
-
-
-### Section 2: Build your own extension! *(optional)*
-
-In this section, you will try to build your own extension on top of an existing application.  
-
-#### Step 1: Tear apart the search extension in Section 1
-
-In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 3, Section 1.  Open the CloudFormation template and understand the different elements that are being deployed.  Open the Lambda functions to explore the logic for how/when conditional checks are made.
-
-#### Step 2: Decide what type of extension you want to build
-
-We decided to build a search extension to add search functionality on top of any application.  What will you come up with?  You could build a caching extension, a visualization extension, or something else.  What feature do you wish your web app had?  Let your imagination run wild.
-
-#### Step 3: Build your extension
-
-Following the generic structure of the search extension, build a CloudFormation template that will add your extension on top of an existing application.  Let us know what you built!
 
 
 ## End of Part 3
