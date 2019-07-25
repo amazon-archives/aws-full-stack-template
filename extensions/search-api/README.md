@@ -40,11 +40,17 @@ The provided CloudFormation template automates the entire creation and deploymen
 
 ## Getting started
 
-To get the Search API Extension up and running in your AWS account, follow these steps (if you do not have an AWS account, please see How do I create and activate a new Amazon Web Services account? (https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)):
+To get the Search API Extension up and running in your AWS account, follow these steps (if you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)):
 
-1. Log into the AWS console (https://console.aws.amazon.com/) (if you are not already logged in)
-2. Choose Launch Stack to open the AWS CloudFormation console and create a new stack.
-[![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml)
+1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already
+2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. The Search API extension is supported in the following regions:
+
+Region name | Region code | Launch
+--- | --- | ---
+US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml) 
+US West (Oregon) |	us-west-2 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml) 
+EU (Ireland) |	eu-west-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml) 
+EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml)
 
 3. Continue through the CloudFormation wizard steps
     1. Name your stack, e.g. SearchAPI
@@ -117,7 +123,7 @@ Have other ideas for extensions we should build? Leave a comment on GitHub!
 ## Additions, forks, and contributions
 
 We are excited that you are interested in using the AWS Full-Stack Template! This is a great place to start if you are just beginning with AWS and want to get a functional application up and running. It is equally useful if you are looking for a sample full-stack application to fork off of and build your own custom application. We encourage developer participation via contributions and suggested additions. Of course you are welcome to create your own version!
-Please see the contributing guidelines (https://github.com/awslabs/aws-full-stack-template/blob/master/CONTRIBUTING.md) for more information.
+Please see the [contributing guidelines](https://github.com/awslabs/aws-full-stack-template/blob/master/CONTRIBUTING.md) for more information.
 
 For just one example of how you can build on top of this, check out AWS Bookstore Demo App (available at https://github.com/aws-samples/aws-bookstore-demo-app), which was built on top of AWS Full Stack Template and Search API extension.
 
