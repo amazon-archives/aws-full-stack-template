@@ -178,6 +178,7 @@ Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of 
 #### Step 3: Add a search bar to the goals app *(optional)*
 
 If you would like, you can go even further by integrating the search functionality into the frontend application.  Feel free to explore how AWS Bookstore Demo App did this, or experiment!
+*Hint:* Check out [SearchBar.tsx](https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/assets/src/modules/search/searchBar/SearchBar.tsx) for a sample search implementation
 
 
 ### Section 2: Build your own extension! *(optional)*
