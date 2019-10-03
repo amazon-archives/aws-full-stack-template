@@ -44,7 +44,7 @@ The provided CloudFormation template automates the entire creation and deploymen
 
 **Database components**
 
-* Goals list – Amazon DynamoDB offers fast, predictable performance for the key-value lookups needed in the goals app, and enormous scale so you can build on top of it..  In this implementation, we have unique identifiers for each goal, the goal name, and description.
+* Goals list – Amazon DynamoDB offers fast, predictable performance for the key-value lookups needed in the goals app, and enormous scale so you can build on top of it.  In this implementation, we have unique identifiers for each goal, the goal name, and description.
 
 **Application components**
 
