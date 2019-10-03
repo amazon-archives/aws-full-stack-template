@@ -78,7 +78,8 @@ Once you've set up AWS Full-Stack Template, check out how you can build on top o
 
 To get the AWS Full-Stack Template up and running in your own AWS account, follow these steps (if you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)):
 
-1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already
+1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.  
+*Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.* 
 2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Full-Stack Template is supported in the following regions:
 
 Region name | Region code | Launch
@@ -90,9 +91,9 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 
 3. Continue through the CloudFormation wizard steps
-    1. Name your stack, i.e. MyGoalsApp
+    1. Name your stack, e.g. MyGoalsApp
     2. Name your S3 bucket (must be lowercase and has to unique across all existing bucket names in Amazon S3).  See [bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/dev//BucketRestrictions.html#bucketnamingrules).
-    3. Provide a project name (must be lowercase, letters only, and **under ten characters**).  This is used when naming your resources, e.g. tables, etc.).
+    3. Provide a project name (must be lowercase, letters only, and **under ten characters**).  This is used when naming your resources, e.g. tables, etc.
     4. After reviewing, check the blue box for creating IAM resources.
 4. Choose **Create stack**.  This will take ~15 minutes to complete.
 5. Sign into your application 
