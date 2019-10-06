@@ -359,7 +359,7 @@ Don't forget to finish **Part 4: Cleanup!** to avoid ongoing charges to your AWS
 
 To make sure you don't continue to incur charges on your AWS account, make sure to tear down your applications and remove all resources associated with both AWS Full-Stack Template and AWS Bookstore Demo App.
 
-1. Log into the [Amazon S3 Console](console.aws.amazon.com/s3) and  delete the buckets created for this workshop.  
+1. Log into the [Amazon S3 Console](https://console.aws.amazon.com/s3) and  delete the buckets created for this workshop.  
    - There should be two buckets created for AWS Full-Stack Template and two buckets created for AWS Bookstore Demo App.  The buckets will be titled "X" and "X-pipeline", where "X" is the name you specified in the CloudFormation wizard under the AssetsBucketName parameter.  
    - *Note: Please be **very careful** to only delete the buckets associated with this workshop that you are absolutely sure you want to delete.*
 2. Log into the AWS CloudFormation Console and find the stack(s) you created during this workshop
