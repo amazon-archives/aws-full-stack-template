@@ -52,29 +52,52 @@ In this part of the workshop, you will spin up a complete instance of [AWS Full-
 
 ### Section 1: Get to know the app
 
-#### Step 1: Open the readme
+#### Step 1: Play with the deployed goals app
 
-Visit https://github.com/awslabs/aws-full-stack-template/blob/master/README.md to open the readme file on GitHub for AWS Full-Stack Template.  
+AWS Full-Stack Template is a full-stack sample web application that creates a simple CRUD (create, read, update, delete) app, and provides the foundational services, components, and plumbing needed to get a basic web application up and running. 
 
-#### Step 2: Play with the deployed goals app
+**[Try out the deployed application here](https://d2k5b8bzo1vefz.cloudfront.net/)**!  This will open a new window with a fully-deployed version of AWS Full-Stack Template.  Sign up using an email address and password (choose **Sign up to explore the demo**). 
+*Note: Given that this is a demo application, we highly suggest that you do not use an email and password combination that you use for other purposes (such as an AWS account, email, or e-commerce site).*
 
-At the top of the readme, choose **Try out the deployed application here!** This will open a new window with a fully-deployed version of AWS Full-Stack Template.  Sign up using an email address and password, and then log in to the app.  Add a goal and a description, and choose save.  Try editing a goal, and then deleting a goal.  Well done - you can CRUD!
+Once you provide your credentials, you will receive a verification code at the email address you provided. Upon entering this verification code, you will be signed into the application.  
 
-#### Step 3: Deploy the application in your own AWS account
+Add a goal and a description, and choose save.  Try editing a goal, and then deleting a goal.  Well done - you can CRUD!
 
-Read the **Overview** section in the readme to get a basic understanding of what the application consists of.  
+#### Step 2: Deploy AWS Full-Stack Template in your own AWS account
 
-Then, scroll down to the **Instructions** section, and follow along to deploy the application in your own AWS account.  (Hint: click the big **Launch Stack** button!)
+***IMPORTANT NOTE:** Creating this application in your AWS account will create and consume AWS resources, which **will cost money**.  We estimate that running this demo application will cost **<$0.10/hour** with light usage.  Be sure to shut down/remove all resources once you are finished with the workshop to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down in **Part 4: Cleanup** below.*
+&nbsp;
 
-#### Step 4: Review architecture
+To get the AWS Full-Stack Template up and running in your own AWS account, follow these steps:
 
-While the application is deploying in CloudFormation (should take ~10-15 minutes), read the remainder of the readme file, including the **Architecture**, **Implementation details**, and **Considerations for demo purposes** sections.  This familiarization with how the app is structured will come in handy once deployment is complete and we browse the components of the application.
+1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.  
+*Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.* 
+2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Full-Stack Template is supported in the following regions:
 
-#### Step 5: Open the endpoint from CloudFormation
+Region name | Region code | Launch
+--- | --- | ---
+US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=MyGoalsApp&templateURL=https://s3.amazonaws.com/aws-fullstack-template/master-fullstack.yaml) 
+US West (Oregon) |	us-west-2 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MyGoalsApp&templateURL=https://s3.amazonaws.com/aws-fullstack-template/master-fullstack.yaml) 
+EU (Ireland) |	eu-west-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=MyGoalsApp&templateURL=https://s3.amazonaws.com/aws-fullstack-template/master-fullstack.yaml) 
+EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=MyGoalsApp&templateURL=https://s3.amazonaws.com/aws-fullstack-template/master-fullstack.yaml)
+
+
+3. Continue through the CloudFormation wizard steps
+    1. Name your stack, e.g. MyGoalsApp
+    2. Name your S3 bucket (must be lowercase and has to unique across all existing bucket names in Amazon S3).  See [bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/dev//BucketRestrictions.html#bucketnamingrules).
+    3. Provide a project name (must be lowercase, letters only, and **under ten characters**).  This is used when naming your resources, e.g. tables, etc.
+    4. After reviewing, check the blue box for creating IAM resources.
+4. Choose **Create stack**.  This will take ~15 minutes to complete.
+
+#### Step 3: Review architecture
+
+While the application is deploying in CloudFormation (should take ~10-15 minutes), browse the [readme](https://github.com/awslabs/aws-full-stack-template/blob/master/README.md) for AWS Full-Stack Template.  The **Overview** section provides a basic understanding of what the application consists of.  The remainder of the readme file dives deeper, including the **Architecture**, **Implementation details**, and **Considerations for demo purposes** sections.  This familiarization with how the app is structured will come in handy once deployment is complete and we browse the components of the application.
+
+#### Step 4: Open the endpoint from CloudFormation
 
 Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new goals app!
 
-Since this is a completely new instance of the application, your username and password that you used before in Step 2 won't work.  Sign up for an account in your goals app, and test out the app!  Test to make sure the verification email works, that you can create, update, and delete goals, etc.
+Since this is a completely new instance of the application, your username and password that you used before in Step 1 won't work.  Sign up for an account in your goals app, and test out the app!  Test to make sure the email verification works, that you can create, update, and delete goals, etc.  The registration/login experience is run in your AWS account, and the supplied credentials are stored in Amazon Cognito.  
 
 
 ### Section 2: Explore the backend
@@ -87,7 +110,7 @@ Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB con
 
 #### Step 2: Delete a user in Cognito
 
-Open the Cognito console, and choose "Manager User Pools."  Look for the user pool with the stack name you used when deploying the goals app in CloudFormation and open this user pool.  Choose "Users and groups" in left navigation menu and choose one of your users.  If you only signed up yourself, you can choose to delete your own user and then sign up again, or create another user from the frontend and delete that user.  Next, choose "Disable user" and then click the "Delete user" button that appears.  Tada!  You are an amazing administrator.
+Open the Cognito console, and choose "Manage User Pools."  Look for the user pool with the stack name you used when deploying the goals app in CloudFormation and open this user pool.  Choose "Users and groups" in the left navigation menu and choose one of your users.  If you only signed up yourself, you can choose to delete your own user and then sign up again, or create another user from the frontend and delete that user.  Next, choose "Disable user" and then click the "Delete user" button that appears.  Tada!  You are an amazing administrator.
 
 #### Step 3: Change the application into a notes application *(optional)*
 The goals application is not that far off from a simple notes application - it contains a title and a description field.  You could easily turn the goals app into a notes-taking app by simply changing the titles, column headers, and buttons on the pages.  Of course, that wouldn't change the backend (APIs, Lambda functions, and Tables), so if you were really passionate about changing the entire application into a notes app, you could make the requisite changes throughout.
@@ -218,33 +241,56 @@ In this part of the workshop, you will spin up a complete instance of [AWS Books
 
 ### Section 1: Get to know the app
 
-#### Step 1: Open the README
+#### Step 1: Play with the deployed Bookstore
 
-Visit https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/README.md to open the readme file on GitHub for AWS Bookstore Demo App. 
+AWS Bookstore Demo App is a full-stack sample web application that creates a storefront (and backend) for customers to shop for fictitious books. You can browse and search for books, look at recommendations and best sellers, manage your cart, checkout, view your orders, and more. 
 
-#### Step 2: Play with the deployed Bookstore
+**[Try out the deployed application here](https://d2h3ljlsmzojxz.cloudfront.net/)**!  This will open a new window with a fully-deployed version of AWS Bookstore Demo App.  Sign up using an email address and password (choose **Sign up to explore the demo**). 
+*Note: Given that this is a demo application, we highly suggest that you do not use an email and password combination that you use for other purposes (such as an AWS account, email, or e-commerce site).*
 
-At the top of the readme, choose **Try out the deployed application here!** This will open a new window with a fully-deployed version of AWS Bookstore Demo App. Sign up using an email address and password, and then log in to the app. View the different product categories, add some items to your cart, and checkout.  Search for a few books by title, author, or category using the search bar.  View the *Best Sellers* list, and see if you can move something to the top of the list by ordering a bunch of books.  Finally, take a look at the social recommendations on the home page and the *Best Sellers* page.  
+Once you provide your credentials, you will receive a verification code at the email address you provided. Upon entering this verification code, you will be signed into the application.  
 
-#### Step 3: Deploy the application in your own AWS account
+View the different product categories, add some items to your cart, and checkout.  Search for a few books by title, author, or category using the search bar.  View the *Best Sellers* list, and see if you can move something to the top of the list by ordering a bunch of books.  Finally, take a look at the social recommendations on the home page and the *Best Sellers* page.  Look at you, savvy book shopper!
 
-Read the **Overview** section in the readme to get a basic understanding of what the application consists of. 
+#### Step 2: Deploy AWS Bookstore Demo App in your own AWS account
 
-Then, scroll down to the **Instructions** section, and follow along to deploy the application in your own AWS account. (Hint: click the big **Launch Stack** button!)
+***IMPORTANT NOTE:** Creating this application in your AWS account will create and consume AWS resources, which **will cost money**.  We estimate that running this demo application will cost **<$0.45/hour** with light usage.  Be sure to shut down/remove all resources once you are finished with the workshop to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down in **Part 4: Cleanup** below.*
+&nbsp;
 
-#### Step 4: Review architecture
+To get the AWS Bookstore Demo App up and running in your own AWS account, follow these steps:
 
-While the application is deploying in CloudFormation (should take ~20-25 minutes), read the remainder of the readme file, including the **Architecture**, **Implementation details**, and **Considerations for demo purposes** sections. This familiarization with how the app is structured will come in handy once deployment is complete and we browse the components of the application.  
+1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.  
+*Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.* 
+2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Bookstore Demo App is supported in the following regions:
+
+Region name | Region code | Launch
+--- | --- | ---
+US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=MyBookstore&templateURL=https://s3.amazonaws.com/aws-bookstore-demo/master-fullstack.yaml) 
+US West (Oregon) |	us-west-2 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MyBookstore&templateURL=https://s3.amazonaws.com/aws-bookstore-demo/master-fullstack.yaml) 
+EU (Ireland) |	eu-west-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=MyBookstore&templateURL=https://s3.amazonaws.com/aws-bookstore-demo/master-fullstack.yaml) 
+EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=MyBookstore&templateURL=https://s3.amazonaws.com/aws-bookstore-demo/master-fullstack.yaml)
+
+
+3. Continue through the CloudFormation wizard steps
+    1. Name your stack, e.g. MyBookstore
+    2. Name your S3 bucket (must be lowercase and has to unique across all existing bucket names in Amazon S3).  See [bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/dev//BucketRestrictions.html#bucketnamingrules).
+    3. Provide a project name (must be lowercase, letters only, and **under ten characters**).  This is used when naming your resources, e.g. tables, search domain, etc.
+    4. After reviewing, check the blue box for creating IAM resources.
+4. Choose **Create stack**.  This will take ~20 minutes to complete.
+
+#### Step 3: Review architecture
+
+While the application is deploying in CloudFormation (should take ~20-25 minutes), browse the [readme](https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/README.md) for AWS Bookstore Demo App.  The **Overview** section provides a basic understanding of what the application consists of.  The remainder of the readme file dives deeper, including the **Architecture**, **Implementation details**, and **Considerations for demo purposes** sections.  This familiarization with how the app is structured will come in handy once deployment is complete and we browse the components of the application.
 
 If you are coming from **Part 1** of this workshop, you should notice many similarities in the architecture.  That is because AWS Bookstore Demo App was built on top of AWS Full-Stack Template.  They contain the same developer infrastructure and frontend architectures, and a similar backend interface through Amazon API Gateway and AWS Lambda.  
 
 What differences can you find in the architecture?  How many DynamoDB tables are there in this app compared to the other?  How many additional APIs are there?
 
-#### Step 5: Open the endpoint from CloudFormation
+#### Step 4: Open the endpoint from CloudFormation
 
-Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL. This is the public endpoint to your deployed application. Click the link to open and explore your brand-new Bookstore!
+Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new Bookstore!
 
-Since this is a completely new instance of the application, your username and password that you used before in Step 2 won't work. Sign up for an account in your Bookstore, and test out the app! Test to make sure the email verification works, and run through some of the use cases from before like search, cart, ordering, and best sellers.
+Since this is a completely new instance of the application, your username and password that you used before in Step 1 won't work.  Sign up for an account in your Bookstore, and test out the app!  Test to make sure the email verification works,  and run through some of the use cases from before like search, cart, ordering, and best sellers.
 
 
 ### Section 2: Explore the backend
@@ -313,9 +359,11 @@ Don't forget to finish **Part 4: Cleanup!** to avoid ongoing charges to your AWS
 
 To make sure you don't continue to incur charges on your AWS account, make sure to tear down your applications and remove all resources associated with both AWS Full-Stack Template and AWS Bookstore Demo App.
 
-1. Log into the AWS CloudFormation Console and find the stack you created for the demo app
-2. Delete the stack 
-   - Double-check that the S3 buckets created for the stack were successfully removed.
+1. Log into the [Amazon S3 Console](console.aws.amazon.com/s3) and  delete the buckets created for this workshop.  
+   - There should be two buckets created for AWS Full-Stack Template and two buckets created for AWS Bookstore Demo App.  The buckets will be titled "X" and "X-pipeline", where "X" is the name you specified in the CloudFormation wizard under the AssetsBucketName parameter.  
+   - *Note: Please be **very careful** to only delete the buckets associated with this workshop that you are absolutely sure you want to delete.*
+2. Log into the AWS CloudFormation Console and find the stack(s) you created during this workshop
+3. Delete the stack(s)
 
 *Remember to shut down/remove all related resources once you are finished to avoid ongoing charges to your AWS account.*
 
