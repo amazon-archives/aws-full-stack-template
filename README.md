@@ -106,7 +106,7 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 ### Cleaning up
 
-To tear down your application and remove all resources associated with the AWS Full-Stack Template, follow these steps:
+To tear down your application and remove all resources associated with AWS Full-Stack Template, follow these steps:
 
 1. Log into the [Amazon S3 Console](https://console.aws.amazon.com/s3) and  delete the buckets created for the demo app.  
    - There should be two buckets created for AWS Full-Stack Template.  The buckets will be titled "X" and "X-pipeline", where "X" is the name you specified in the CloudFormation wizard under the AssetsBucketName parameter.  
