@@ -173,6 +173,8 @@ In this section, you will start with the application you deployed in **Part 1** 
 
 Following the same guidelines for CloudFormation as in Part 1 of this workshop, create a new stack, and use the template provided in the [**Extensions** folder](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api) to add search capabilities to the Goals app via Elasticsearch service.  Deploy the extension.
 
+To integrate this search extension with the instance of AWS Full-Stack Template you just deployed, go to the Resources tab of your deployed template and search for the DynamoDB table that was created (called "TGoals") and copy the physical id.  Next, search for the API that was created (called "AppApi") and copy the physical id.  You will use both of these parameters during the deployment of the search extension.
+
 #### Step 2: Play with the search capability
 
 Now that you've deployed the search extension, let's test it to make sure search results are being returned properly. 
