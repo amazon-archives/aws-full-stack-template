@@ -197,10 +197,6 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
     3. Specify the API Gateway ID to integrate with (You can find this in the CloudFormation console in the Resources tab of your deployed AWS Full-Stack Template.  Search for the API that was created called "AppApi" and use the physical ID.)
     4. After reviewing, check the blue box for creating IAM resources. 
 4. Choose Create stack. This will take ~15 minutes to complete. 
-5. After the stack completes, go to the Lambda console and find the Search function ([DynamoDBTableName]-Search)
-    1. Modify the fields array on line 24 with fields from your DynamoDB table to query on in the format of [column name].[column type] (S, N, BOOL, etc)
-    2. This allows us to achieve optimal performance as its best to query ElasticSearch on specific fields. 
-    3. Since you are deploying this on top of AWS Full-Stack Template with the existing goals schema, no additional modification is needed. 
 
 #### Step 2: Play with the search capability
 
