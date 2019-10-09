@@ -193,8 +193,8 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 3. Continue through the CloudFormation wizard steps
     1. Name your stack, e.g. SearchAPI
-    2. Enter the DynamoDB table to integrate with. (You can find this in the CloudFormation console in the Resources tab of your deployed AWS Full-Stack Template.  Search for the DynamoDB table that was created called "TGoals" and use the physical ID.)
-    3. Specify the API Gateway ID to integrate with (You can find this in the CloudFormation console in the Resources tab of your deployed AWS Full-Stack Template.  Search for the API that was created called "AppApi" and use the physical ID.)
+    2. Enter the DynamoDB table to integrate with. (You can find this in the CloudFormation console in the Outputs tab of your deployed AWS Full-Stack Template.  In the DynamoDBTable row, use the value in the **value** column.)
+    3. Specify the API Gateway ID to integrate with (You can find this in the CloudFormation console in the Outputs tab of your deployed AWS Full-Stack Template.  In the APIGateway row, use the value in the **value** column.)
     4. After reviewing, check the blue box for creating IAM resources. 
 4. Choose Create stack. This will take ~15 minutes to complete. 
 5. After the stack completes, go to the Lambda console and find the Search function ([DynamoDBTableName]-Search)
