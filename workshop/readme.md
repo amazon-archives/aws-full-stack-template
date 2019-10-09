@@ -149,7 +149,7 @@ Now that you have a snazzy new parameter to track when your goal was last update
 
 Next, go to the pipeline that was set up for you.  Chose "Pipeline" from the left navigation, then choose "Pipelines."  Open the pipeline associated with your goals app project, and choose "Release change."
 
-Wait a few minutes for the change to go through, and refresh your goals app.  What else can you add?
+Wait a few minutes for the change to go through, and refresh your goals app page.  If you don't see the new column show up, do a **hard refresh** (ctrl/command + shift + R) in your browser.  Cool!  What else can you add?
 
 
 ## End of Part 1
@@ -202,7 +202,9 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 Now that you've deployed the search extension, let's test it to make sure search results are being returned properly. 
 
-Open the DynamoDB console and find the table associated with your goals.  Go to the items tab and choose one of the items (a goal).  Copy the userID and the title of the goal and make a note of them for use in a minute.  
+Before proceeding, either create a new goal or update one of your existing goals.  When the search extension is deployed, it does not currently backfill the ES cluster with existing data from DynamoDB (PR request, please!).  Creating a new goal or updating an existing one will stream the new/updated goal data to the ES cluster.
+
+Open the DynamoDB console and find the table associated with your goals.  Go to the items tab and choose the new/updated goal you just modified.  Copy the userID and the title of the goal and make a note of them for use in a minute. 
 
 In a new tab, open the Lambda console and look for the search function that was created as part of the extension you just ran in CloudFormation.  It should be titled "yourextensionprojectname-Search."  Open the Lambda function, choose the "Select a test event" dropdown towards the top, and choose "Configure test events."  In the "Event template" dropdown, choose "Amazon API Gateway AWS Proxy."  Here we are setting up a test for our search extension.
 
@@ -221,7 +223,7 @@ to:
 ```
 where "title of your goal" is the goal title you made a note of earlier (or perhaps one word of your goal title).  This is simulating the string that you might put into a search bar.
 
-Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.
+Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.  
 
 #### Step 3: Add a search bar to the goals app *(optional)*
 
