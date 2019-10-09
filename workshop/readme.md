@@ -37,6 +37,8 @@ If you complete this workshop in it's entirety, good for you!  We are very impre
 
 In order to maximize your time at the workshop, please make sure you have an AWS account set up.  If you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
 
+In addition to your AWS account, you will need to make sure you have sufficient privileges to create, modify, and delete resources on your AWS account.  For the purposes of this workshop, we recommend you have admin privileges.
+
 *Be sure to shut down/remove all resources once you are finished with the workshop to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down in **Part 4: Cleanup** below.*
 
 &nbsp;
@@ -106,7 +108,7 @@ Now that the application is up and running, let's open the hood and play around 
 
 #### Step 1: Change the details for one of your goals directly in DynamoDB
 
-Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB console, find the table ending in "Goals" that corresponds to this project, and choose one of the goal items to modify.  Change either the "title" string or the "content" string (which maps to the "Description" field in the app), and save your change in DynamoDB.  Return to the goals app, and refresh the page.  You should see your change reflected in the list.  
+Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB console, find the table that corresponds to this project, and choose one of the goal items to modify.  Change either the "title" string or the "content" string (which maps to the "Description" field in the app), and save your change in DynamoDB.  Return to the goals app, and refresh the page.  You should see your change reflected in the list.  
 
 #### Step 2: Delete a user in Cognito
 
@@ -171,9 +173,34 @@ In this section, you will start with the application you deployed in **Part 1** 
 
 #### Step 1: Deploy the search extension in your AWS account
 
-Following the same guidelines for CloudFormation as in Part 1 of this workshop, create a new stack, and use the template provided in the [**Extensions** folder](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api) to add search capabilities to the Goals app via Elasticsearch service.  Deploy the extension.
+The Search API Extension enables you to add search functionality on top of your data in DynamoDB powered by ElasticSearch and API Gateway. The extension can be created with a single CloudFormation template!  This extension takes in a DynamoDB table and API Gateway ID as parameters. It will spin up an ElasticSearch cluster, stream changes from DynamoDB to ElasticSearch, and create a Search API. Normally you can choose between integrating with an existing API Gateway ID or having the extension create a new one, but since we are building on top of AWS Full-Stack Template, we will integrate with the existing resources.
 
-To integrate this search extension with the instance of AWS Full-Stack Template you just deployed, go to the Resources tab of your deployed template and search for the DynamoDB table that was created (called "TGoals") and copy the physical id.  Next, search for the API that was created (called "AppApi") and copy the physical id.  You will use both of these parameters during the deployment of the search extension.
+***IMPORTANT NOTE:** Creating this application in your AWS account will create and consume AWS resources, which **will cost money**.  We estimate that running this demo application will cost **<$0.10/hour** with light usage.  Be sure to shut down/remove all resources once you are finished with the workshop to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down in **Part 4: Cleanup** below.*
+&nbsp;
+
+To get the Search API Extension up and running in your AWS account, follow these steps:
+
+1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.  
+*Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.* 
+2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. The Search API extension is supported in the following regions:
+
+Region name | Region code | Launch
+--- | --- | ---
+US East (N. Virginia) | us-east-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml) 
+US West (Oregon) |	us-west-2 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml) 
+EU (Ireland) |	eu-west-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml) 
+EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=SearchAPI&templateURL=https://s3.amazonaws.com/aws-dmas/ddb-es/master.yaml)
+
+3. Continue through the CloudFormation wizard steps
+    1. Name your stack, e.g. SearchAPI
+    2. Enter the DynamoDB table to integrate with. (You can find this in the CloudFormation console in the Resources tab of your deployed AWS Full-Stack Template.  Search for the DynamoDB table that was created called "TGoals" and use the physical ID.)
+    3. Specify the API Gateway ID to integrate with (You can find this in the CloudFormation console in the Resources tab of your deployed AWS Full-Stack Template.  Search for the API that was created called "AppApi" and use the physical ID.)
+    4. After reviewing, check the blue box for creating IAM resources. 
+4. Choose Create stack. This will take ~15 minutes to complete. 
+5. After the stack completes, go to the Lambda console and find the Search function ([DynamoDBTableName]-Search)
+    1. Modify the fields array on line 24 with fields from your DynamoDB table to query on in the format of [column name].[column type] (S, N, BOOL, etc)
+    2. This allows us to achieve optimal performance as its best to query ElasticSearch on specific fields. 
+    3. Since you are deploying this on top of AWS Full-Stack Template with the existing goals schema, no additional modification is needed. 
 
 #### Step 2: Play with the search capability
 
@@ -213,7 +240,7 @@ In this section, you will try to build your own extension on top of an existing 
 
 #### Step 1: Tear apart the search extension in Section 1
 
-In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 3, Section 1.  Open the CloudFormation template and understand the different elements that are being deployed.  Open the Lambda functions to explore the logic for how/when conditional checks are made.
+In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 3, Section 1.  Open the CloudFormation template and understand the different elements that are being deployed.  Open the Lambda functions to explore the logic for how/when conditional checks are made.  You can find all the resources for the search extension along with the CloudFormation template in the [**Extensions** folder](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api).
 
 #### Step 2: Decide what type of extension you want to build
 
