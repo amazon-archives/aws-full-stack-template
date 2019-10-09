@@ -210,13 +210,13 @@ Next, enter an event name (e.g. searchtest) and change the following lines of co
 
 ```js
 "queryStringParameters": {
-    "foo": bar
+    "foo": "bar"
   },
 ```
 to:
 ```js
 "queryStringParameters": {
-    "q": title of your goal
+    "q": "title of your goal"
   },
 ```
 where "title of your goal" is the goal title you made a note of earlier (or perhaps one word of your goal title).  This is simulating the string that you might put into a search bar.
