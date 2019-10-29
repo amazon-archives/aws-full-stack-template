@@ -99,7 +99,15 @@ export default class Home extends Component<HomeProps, HomeState> {
             </tr>
           </thead>
           <tbody>
-            {this.state.isLoading ? <Spinner animation="border" className="center-spinner" /> : this.renderGoalsList(this.state.goals)}
+              {
+                this.state.isLoading ?
+                (
+                  <tr><td>
+                    <Spinner animation="border" className="center-spinner" />
+                  </td></tr>
+                ) :
+                this.renderGoalsList(this.state.goals)
+            }
           </tbody>
         </Table>
       </div>
