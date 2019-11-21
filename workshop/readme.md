@@ -74,7 +74,7 @@ To get the AWS Full-Stack Template up and running in your own AWS account, follo
 
 1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.  
 *Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.* 
-2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Full-Stack Template is supported in the following regions:
+2. Choose one of the **Launch Stack** buttons below for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Full-Stack Template is supported in the following regions:
 
 Region name | Region code | Launch
 --- | --- | ---
@@ -93,11 +93,11 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 #### Step 3: Review architecture
 
-While the application is deploying in CloudFormation (should take ~10-15 minutes), browse the [readme](https://github.com/awslabs/aws-full-stack-template/blob/master/README.md) for AWS Full-Stack Template.  The **Overview** section provides a basic understanding of what the application consists of.  The remainder of the readme file dives deeper, including the **Architecture**, **Implementation details**, and **Considerations for demo purposes** sections.  This familiarization with how the app is structured will come in handy once deployment is complete and we browse the components of the application.
+While the application is deploying in CloudFormation (should take ~15 minutes), browse the [readme](https://github.com/awslabs/aws-full-stack-template/blob/master/README.md) for AWS Full-Stack Template.  The **Overview** section provides a basic understanding of what the application consists of.  The remainder of the readme file dives deeper, including the **Architecture**, **Implementation details**, and **Considerations for demo purposes** sections.  This familiarization with how the app is structured will come in handy once deployment is complete and we browse the components of the application.
 
 #### Step 4: Open the endpoint from CloudFormation
 
-Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new goals app!
+Once the CloudFormation deployment is complete, check the status of the build in the [CodePipeline](https://console.aws.amazon.com/codesuite/codepipeline/pipelines) console.  When that has succeeded, go back to the CloudFormation console, open the stack details page for your application, go to the **Outputs** table, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new goals app!
 
 Since this is a completely new instance of the application, your username and password that you used before in Step 1 won't work.  Sign up for an account in your goals app, and test out the app!  Test to make sure the email verification works, that you can create, update, and delete goals, etc.  The registration/login experience is run in your AWS account, and the supplied credentials are stored in Amazon Cognito.  
 
@@ -108,11 +108,11 @@ Now that the application is up and running, let's open the hood and play around 
 
 #### Step 1: Change the details for one of your goals directly in DynamoDB
 
-Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB console, find the table that corresponds to this project, and choose one of the goal items to modify.  Change either the "title" string or the "content" string (which maps to the "Description" field in the app), and save your change in DynamoDB.  Return to the goals app, and refresh the page.  You should see your change reflected in the list.  
+Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB console, find the table that corresponds to this project (the table name will match the "ProjectName" you used when creating the stack in CloudFormation), and choose one of the goal items to modify.  Change either the "title" string or the "content" string (which maps to the "Description" field in the app), and save your change in DynamoDB.  Return to the goals app, and refresh the page.  You should see your change reflected in the list.  
 
 #### Step 2: Delete a user in Cognito
 
-Open the Cognito console, and choose "Manage User Pools."  Look for the user pool with the stack name you used when deploying the goals app in CloudFormation and open this user pool.  Choose "Users and groups" in the left navigation menu and choose one of your users.  If you only signed up yourself, you can choose to delete your own user and then sign up again, or create another user from the frontend and delete that user.  Next, choose "Disable user" and then click the "Delete user" button that appears.  Tada!  You are an amazing administrator.
+Open the Cognito console, and choose "Manage User Pools."  Look for the user pool that matches the "ProjectName" you used when creating the stack in CloudFormation and open this user pool.  Choose "Users and groups" in the left navigation menu and choose one of your users.  If you only signed up yourself, you can choose to delete your own user and then sign up again, or create another user from the frontend and delete that user.  Next, choose "Disable user" and then click the "Delete user" button that appears.  Tada!  You are an amazing administrator.
 
 #### Step 3: Change the application into a notes application *(optional)*
 The goals application is not that far off from a simple notes application - it contains a title and a description field.  You could easily turn the goals app into a notes-taking app by simply changing the titles, column headers, and buttons on the pages.  Of course, that wouldn't change the backend (APIs, Lambda functions, and Tables), so if you were really passionate about changing the entire application into a notes app, you could make the requisite changes throughout.
@@ -141,7 +141,7 @@ ExpressionAttributeValues: {
 
 Note we have added the "lastUpdated" parameter in two places.  Save your function.  Since the function hasn't been used yet, there won't be any "lastUpdated" record created until the function is called, so go modify one of your goals in the app.  You can change the title or description (up to you), and choose "Update goal."  
 
-Next, let's go to DynamoDB to verify the new "lastUpdated" information is passed through.  Open the DynamoDB console and search for a table ending in "-Goals."  Open the goal you updated, and you should now see the "lastUpdated" information in the item. 
+Next, let's go to DynamoDB to verify the new "lastUpdated" information is passed through.  Open the DynamoDB console and find the table that corresponds to this goals project (the table name will match the "ProjectName" you used when creating the stack in CloudFormation).  Open the item corresponding to the goal you updated, and you should now see the "lastUpdated" information in the item. 
 
 #### Step 2: Add the new "Last updated" column to the goals list page
 
@@ -173,7 +173,7 @@ In this section, you will start with the application you deployed in **Part 1** 
 
 #### Step 1: Deploy the search extension in your AWS account
 
-The Search API Extension enables you to add search functionality on top of your data in DynamoDB powered by ElasticSearch and API Gateway. The extension can be created with a single CloudFormation template!  This extension takes in a DynamoDB table and API Gateway ID as parameters. It will spin up an ElasticSearch cluster, stream changes from DynamoDB to ElasticSearch, and create a Search API. Normally you can choose between integrating with an existing API Gateway ID or having the extension create a new one, but since we are building on top of AWS Full-Stack Template, we will integrate with the existing resources.
+The Search API Extension enables you to add search functionality on top of your data in DynamoDB powered by Elasticsearch and API Gateway. The extension can be created with a single CloudFormation template!  This extension takes in a DynamoDB table and API Gateway ID as parameters. It will spin up an Elasticsearch cluster, stream changes from DynamoDB to Elasticsearch, and create a Search API. Normally you can choose between integrating with an existing API Gateway ID or having the extension create a new one, but since we are building on top of AWS Full-Stack Template, we will integrate with the existing resources.
 
 ***IMPORTANT NOTE:** Creating this application in your AWS account will create and consume AWS resources, which **will cost money**.  We estimate that running this demo application will cost **<$0.10/hour** with light usage.  Be sure to shut down/remove all resources once you are finished with the workshop to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down in **Part 4: Cleanup** below.*
 &nbsp;
@@ -182,7 +182,7 @@ To get the Search API Extension up and running in your AWS account, follow these
 
 1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.  
 *Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.* 
-2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. The Search API extension is supported in the following regions:
+2. Choose one of the **Launch Stack** buttons below for your desired AWS region to open the AWS CloudFormation console and create a new stack. The Search API extension is supported in the following regions:
 
 Region name | Region code | Launch
 --- | --- | ---
@@ -202,9 +202,9 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 Now that you've deployed the search extension, let's test it to make sure search results are being returned properly. 
 
-Before proceeding, either create a new goal or update one of your existing goals.  When the search extension is deployed, it does not currently backfill the ES cluster with existing data from DynamoDB (PR request, please!).  Creating a new goal or updating an existing one will stream the new/updated goal data to the ES cluster.
+Before proceeding, either create a new goal or update one of your existing goals.  When the search extension is deployed, it does not currently backfill the ES cluster with existing data from DynamoDB (pull request, please!).  Creating a new goal or updating an existing one will stream the new/updated goal data to the ES cluster.
 
-Open the DynamoDB console and find the table associated with your goals.  Go to the items tab and choose the new/updated goal you just modified.  Copy the userID and the title of the goal and make a note of them for use in a minute. 
+Open the DynamoDB console and find the table associated with your goals app.  Go to the items tab and choose the new/updated goal you just modified.  Copy the userID and the title of the goal and make a note of them for use in a minute. 
 
 In a new tab, open the Lambda console and look for the search function that was created as part of the extension you just ran in CloudFormation.  It should be titled "yourextensionprojectname-Search."  Open the Lambda function, choose the "Select a test event" dropdown towards the top, and choose "Configure test events."  In the "Event template" dropdown, choose "Amazon API Gateway AWS Proxy."  Here we are setting up a test for our search extension.
 
@@ -229,7 +229,7 @@ Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of 
 
 If you would like, you can go even further by integrating the search functionality into the frontend application.  Feel free to explore how AWS Bookstore Demo App did this, or experiment!
 
-*Hint:* Check out [SearchBar.tsx](https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/assets/src/modules/search/searchBar/SearchBar.tsx) for a sample search implementation
+*Hint:* Check out [SearchBar.tsx](https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/assets/src/modules/search/searchBar/SearchBar.tsx) for a sample search implementation.
 
 
 ### Section 2: Build your own extension! *(optional)*
@@ -238,7 +238,7 @@ In this section, you will try to build your own extension on top of an existing 
 
 #### Step 1: Tear apart the search extension in Section 1
 
-In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 3, Section 1.  Open the CloudFormation template and understand the different elements that are being deployed.  Open the Lambda functions to explore the logic for how/when conditional checks are made.  You can find all the resources for the search extension along with the CloudFormation template in the [**Extensions** folder](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api).
+In order to figure out how you can build a generic extension on top of an existing application (ideally any application), first start by tearing apart the search extension we discussed in Part 2, Section 1.  Open the CloudFormation template and understand the different elements that are being deployed.  Open the Lambda functions to explore the logic for how/when conditional checks are made.  You can find all the resources for the search extension along with the CloudFormation template in the [**Extensions** folder](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api).
 
 #### Step 2: Decide what type of extension you want to build
 
@@ -288,7 +288,7 @@ To get the AWS Bookstore Demo App up and running in your own AWS account, follow
 
 1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.  
 *Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.* 
-2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Bookstore Demo App is supported in the following regions:
+2. Choose one of the **Launch Stack** buttons below for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Bookstore Demo App is supported in the following regions:
 
 Region name | Region code | Launch
 --- | --- | ---
@@ -307,7 +307,7 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 #### Step 3: Review architecture
 
-While the application is deploying in CloudFormation (should take ~20-25 minutes), browse the [readme](https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/README.md) for AWS Bookstore Demo App.  The **Overview** section provides a basic understanding of what the application consists of.  The remainder of the readme file dives deeper, including the **Architecture**, **Implementation details**, and **Considerations for demo purposes** sections.  This familiarization with how the app is structured will come in handy once deployment is complete and we browse the components of the application.
+While the application is deploying in CloudFormation (should take ~20 minutes), browse the [readme](https://github.com/aws-samples/aws-bookstore-demo-app/blob/master/README.md) for AWS Bookstore Demo App.  The **Overview** section provides a basic understanding of what the application consists of.  The remainder of the readme file dives deeper, including the **Architecture**, **Implementation details**, and **Considerations for demo purposes** sections.  This familiarization with how the app is structured will come in handy once deployment is complete and we browse the components of the application.
 
 If you are coming from **Part 1** of this workshop, you should notice many similarities in the architecture.  That is because AWS Bookstore Demo App was built on top of AWS Full-Stack Template.  They contain the same developer infrastructure and frontend architectures, and a similar backend interface through Amazon API Gateway and AWS Lambda.  
 
@@ -315,7 +315,7 @@ What differences can you find in the architecture?  How many DynamoDB tables are
 
 #### Step 4: Open the endpoint from CloudFormation
 
-Once the CloudFormation deployment is complete, view the **Outputs** table in the stack details page, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new Bookstore!
+Once the CloudFormation deployment is complete, check the status of the build in the [CodePipeline](https://console.aws.amazon.com/codesuite/codepipeline/pipelines) console.  When that has succeeded, go back to the CloudFormation console, open the stack details page for your application, go to the **Outputs** table, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new Bookstore!
 
 Since this is a completely new instance of the application, your username and password that you used before in Step 1 won't work.  Sign up for an account in your Bookstore, and test out the app!  Test to make sure the email verification works,  and run through some of the use cases from before like search, cart, ordering, and best sellers.
 
