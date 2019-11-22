@@ -41,7 +41,7 @@ The goal of the CloudWatch alarms to Slack or Chime extension is to simplify and
 To get the CloudWatch alarm to Slack or Chime extension up and running in your AWS account, follow these steps (if you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)):
 
 1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already
-2. Choose **Launch Stack** for your desired AWS region to open the AWS CloudFormation console and create a new stack. The CloudWatch alarm to Slack or Chime extension is supported in the following regions:
+2. Choose one of the **Launch Stack** buttons below for your desired AWS region to open the AWS CloudFormation console and create a new stack. The CloudWatch alarm to Slack or Chime extension is supported in the following regions:
 
 Region name | Region code | Launch
 --- | --- | ---
