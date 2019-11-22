@@ -57,7 +57,7 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
     3. Specify the Slack or Amazon Chime webhook you want to send alerts to
     4. After reviewing, check the blue box for creating IAM resources. 
 4. Choose Create stack. This will take ~2 minutes to complete. 
-5. Your done! 
+5. You're done! 
     1. Want to recieve alerts for additional CloudWatch alarms, see  the section below. 
 
 ### Adding alerts for additional CloudWatch alarms
@@ -69,7 +69,7 @@ Once the stack has been created, you can add additional CloudWatch alarms that y
 
 ### Cleaning up
 
-To tear down your extension and remove all resources associated with the AWS CloudWatch to Slack/Chime Extension, follow these steps:
+To tear down your extension and remove all resources associated with the AWS CloudWatch to Slack/Chime extension, follow these steps:
 
 1. Log into the AWS CloudFormation Console and find the stack you created for the demo app
 2. Delete the stack
@@ -104,7 +104,7 @@ Have other ideas for extensions we should build? Leave a comment on GitHub!
 
 ## Additions, forks, and contributions
 
-We are excited that you are interested in using the AWS Full-Stack Template! This is a great place to start if you are just beginning with AWS and want to get a functional application up and running. It is equally useful if you are looking for a sample full-stack application to fork off of and build your own custom application. We encourage developer participation via contributions and suggested additions. Of course you are welcome to create your own version!
+We are excited that you are interested in using [AWS Full-Stack Template](https://github.com/awslabs/aws-full-stack-template) and some of these extensions! This is a great place to start if you are just beginning with AWS and want to get a functional application up and running. It is equally useful if you are looking for a sample full-stack application to fork off of and build your own custom application. We encourage developer participation via contributions and suggested additions. Of course you are welcome to create your own version!
 Please see the [contributing guidelines](https://github.com/awslabs/aws-full-stack-template/blob/master/CONTRIBUTING.md) for more information.
 
-For just one example of how you can build on top of this, check out AWS Bookstore Demo App (available at https://github.com/aws-samples/aws-bookstore-demo-app), which was built on top of AWS Full Stack Template and Search API extension.
+For just one example of how you can build on top of this, check out [AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app), which was built on top of AWS Full-Stack Template and the [Search API extension](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api).
