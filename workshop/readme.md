@@ -36,8 +36,8 @@ If you complete this workshop in it's entirety, good for you!  We are very impre
 ### Prerequisite: AWS account
 
 In order to maximize your time at the workshop, please make sure you have an AWS account set up.  If you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
-
-In addition to your AWS account, you will need to make sure you have sufficient privileges to create, modify, and delete resources on your AWS account.  For the purposes of this workshop, we recommend you have admin privileges.
+* Your account must have sufficient privileges to create, modify, and delete resources.  For the purposes of this workshop, **we recommend you have admin privileges**.
+* Ensure that you have < 5 VPCs and < 100 S3 buckets in your account.
 
 *Be sure to shut down/remove all resources once you are finished with the workshop to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down in **Part 4: Cleanup** below.*
 
@@ -49,10 +49,10 @@ In addition to your AWS account, you will need to make sure you have sufficient 
 
 ## Part 1: AWS Full-Stack Template
 
-In this part of the workshop, you will spin up a complete instance of [AWS Full-Stack Template](https://github.com/awslabs/aws-full-stack-template), understand the application architecture, manually change some components, and explore adding additions.
+In this part of the workshop, you will spin up a complete instance of [AWS Full-Stack Template](https://github.com/awslabs/aws-full-stack-template), understand the application architecture, manually change some components, and explore some additions.
 
 
-### Section 1: Get to know the app
+### Section 1: Get to know the app 
 
 #### Step 1: Play with the deployed goals app
 
@@ -65,7 +65,7 @@ Once you provide your credentials, you will receive a verification code at the e
 
 Add a goal and a description, and choose save.  Try editing a goal, and then deleting a goal.  Well done - you can CRUD!
 
-#### Step 2: Deploy AWS Full-Stack Template in your own AWS account
+#### Step 2: Deploy AWS Full-Stack Template in your own AWS account 
 
 ***IMPORTANT NOTE:** Creating this application in your AWS account will create and consume AWS resources, which **will cost money**.  We estimate that running this demo application will cost **<$0.10/hour** with light usage.  Be sure to shut down/remove all resources once you are finished with the workshop to avoid ongoing charges to your AWS account (see instructions on cleaning up/tear down in **Part 4: Cleanup** below.*
 &nbsp;
@@ -100,6 +100,7 @@ While the application is deploying in CloudFormation (should take ~15 minutes), 
 Once the CloudFormation deployment is complete, check the status of the build in the [CodePipeline](https://console.aws.amazon.com/codesuite/codepipeline/pipelines) console.  When that has succeeded, go back to the CloudFormation console, open the stack details page for your application, go to the **Outputs** table, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new goals app!
 
 Since this is a completely new instance of the application, your username and password that you used before in Step 1 won't work.  Sign up for an account in your goals app, and test out the app!  Test to make sure the email verification works, that you can create, update, and delete goals, etc.  The registration/login experience is run in your AWS account, and the supplied credentials are stored in Amazon Cognito.  
+*Note: If you are having issues with the sign up page using Firefox, try using Chrome.*
 
 
 ### Section 2: Explore the backend
@@ -116,6 +117,12 @@ Open the Cognito console, and choose "Manage User Pools."  Look for the user poo
 
 #### Step 3: Change the application into a notes application *(optional)*
 The goals application is not that far off from a simple notes application - it contains a title and a description field.  You could easily turn the goals app into a notes-taking app by simply changing the titles, column headers, and buttons on the pages.  Of course, that wouldn't change the backend (APIs, Lambda functions, and Tables), so if you were really passionate about changing the entire application into a notes app, you could make the requisite changes throughout.
+
+Hint: To get started with changing just the page-level items, open the CodeCommit console, choose "Repositories" and then "Code" from the left navigation.  Navigate to /src/modules/signup/Home.tsx and /src/modules/goal/AddEditGoal.tsx.  Choose "Edit" in the upper-right, make your changes, and then choose "Commit changes" at the bottom.  
+
+Next, go to the pipeline that was set up for you in CodePipeline (choose "Pipeline" from the left navigation, then choose "Pipelines").  Open the pipeline associated with your goals app project, and choose "Release change."
+
+Watch the CodePipeline console for the build to complete (this will take a few minutes).  When that has succeeded, refresh your goals app page.  If you don't see the new column show up, do a **hard refresh** (ctrl/command + shift + R) in your browser.  Cool!
 
 This entire step is optional, but illustrative if you want to learn more about the different backend pieces.
 
@@ -139,17 +146,50 @@ ExpressionAttributeValues: {
     },
 ```
 
-Note we have added the "lastUpdated" parameter in two places.  Save your function.  Since the function hasn't been used yet, there won't be any "lastUpdated" record created until the function is called, so go modify one of your goals in the app.  You can change the title or description (up to you), and choose "Update goal."  
+Note we have added the "lastUpdated" parameter in two places (don't forget the comma after the "null").  Save your function.  Since the function hasn't been used yet, there won't be any "lastUpdated" record created until the function is called, so go modify one of your goals in the app.  You can change the title or description (up to you), and choose "Update goal."  
 
 Next, let's go to DynamoDB to verify the new "lastUpdated" information is passed through.  Open the DynamoDB console and find the table that corresponds to this goals project (the table name will match the "ProjectName" you used when creating the stack in CloudFormation).  Open the item corresponding to the goal you updated, and you should now see the "lastUpdated" information in the item. 
 
-#### Step 2: Add the new "Last updated" column to the goals list page
+#### Step 2: Add a "Last updated" column to the goals list page
 
-Now that you have a snazzy new parameter to track when your goal was last updated, the next step is to add this information to the goals list page.  We'll leave this part to you, but here's a big hint: you'll only need to change one file. To get started, open the CodeCommit console, choose "Repositories" and then "Code" from the left navigation.  Navigate to /src/modules/signup/Home.tsx.  Choose "Edit" in the upper-right, make your changes, and then choose "Commit changes" at the bottom.  
+Now that you have a snazzy new parameter to track when your goal was last updated, the next step is to add this information to the goals list page.  Here's a big hint: you only need to change one file. To get started, open the CodeCommit console, choose "Repositories" and then "Code" from the left navigation.  Navigate to /src/modules/signup/Home.tsx.  Choose "Edit" in the upper-right.  
 
-Next, go to the pipeline that was set up for you.  Chose "Pipeline" from the left navigation, then choose "Pipelines."  Open the pipeline associated with your goals app project, and choose "Release change."
+Add new lines under "interface Goal," "return goalsList," and "Table" so it looks like this:
+```js
+interface Goal { 
+  content: string; 
+  goalId: string; 
+  title: string; 
+  createdAt: Date; 
+  lastUpdated: Date;  //<--This line!
+} 
+```
+```js
+    return goalsList.concat(goals).map( 
+      (goal, i) => 
+        <tr key={goal.goalId}> 
+          <td><a href={`/goal/${goal.goalId}`}>{goal.title}</a></td> 
+          <td><div className="description">{goal.content.trim().split("\n")[0]}</div></td> 
+          <td>{new Date(goal.createdAt).toLocaleString()}</td> 
+          <td>{new Date(goal.lastUpdated).toLocaleString()}</td>  //<--This line!
+        </tr> 
+    ); 
+```    
+```js
+        <Table variant="dark'"> 
+          <thead> 
+            <tr> 
+              <th>Goal name</th> 
+              <th>Description</th> 
+              <th>Date created</th> 
+              <th>Date modified</th>  //<--This line!
+            </tr> 
+```
+Make your changes and then choose "Commit changes" at the bottom.
 
-Wait a few minutes for the change to go through, and refresh your goals app page.  If you don't see the new column show up, do a **hard refresh** (ctrl/command + shift + R) in your browser.  Cool!  What else can you add?
+Next, go to the pipeline that was set up for you in CodePipeline (choose "Pipeline" from the left navigation, then choose "Pipelines").  Open the pipeline associated with your goals app project, and choose "Release change."
+
+Watch the CodePipeline console for the build to complete (this will take a few minutes).  When that has succeeded, refresh your goals app page.  If you don't see the new column show up, do a **hard refresh** (ctrl/command + shift + R) in your browser.  Cool!  What else can you add?
 
 
 ## End of Part 1
@@ -164,12 +204,13 @@ You finished Part 1 of the workshop!  If you do not plan to immediately continue
 
 ## Part 2: Extensions
 
+In this part of the workshop, you will spin up the [Search API Extension](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions/search-api), explore the architecture of the Extension, and understand how to take a basic application like the Goals app in AWS Full-Stack Template and turn it into something different by adding components.
+
+
+### Prerequisite
+This part requires [Part 1: Step 2](#step-2-deploy-aws-full-stack-template-in-your-own-aws-account) and [Part 1: Step 4](#step-4-open-the-endpoint-from-cloudformation) of the workshop to be completed first.  This will ensure you have a functioning instance of AWS Full-Stack Template up and running that you can add on to.
 
 ### Section 1: Deploy a search extension to AWS Full-Stack Template
-
-### Getting started
-
-In this section, you will start with the application you deployed in **Part 1** with AWS Full-Stack Template and deploy an extension (via CloudFormation) to add onto the application.  The purpose of this section is to illustrate how you can take a basic application like the Goals app and turn it into something different by adding components.
 
 #### Step 1: Deploy the search extension in your AWS account
 
@@ -263,7 +304,7 @@ Don't forget to finish **Part 4: Cleanup!** to avoid ongoing charges to your AWS
 
 ## Part 3: AWS Bookstore Demo App
 
-In this part of the workshop, you will spin up a complete instance of [AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app), understand the application architecture, manually change some components, and explore adding additions.  If you just completed **Part 1: AWS Full-Stack Template**, some of these instructions will be repetitive.
+In this part of the workshop, you will spin up a complete instance of [AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app), understand the application architecture, manually change some components, and explore some additions.  If you just completed **Part 1: AWS Full-Stack Template**, some of these instructions will be repetitive.
 
 
 ### Section 1: Get to know the app
@@ -317,7 +358,8 @@ What differences can you find in the architecture?  How many DynamoDB tables are
 
 Once the CloudFormation deployment is complete, check the status of the build in the [CodePipeline](https://console.aws.amazon.com/codesuite/codepipeline/pipelines) console.  When that has succeeded, go back to the CloudFormation console, open the stack details page for your application, go to the **Outputs** table, and find the CloudFront URL.  This is the public endpoint to your deployed application.  Click the link to open and explore your brand-new Bookstore!
 
-Since this is a completely new instance of the application, your username and password that you used before in Step 1 won't work.  Sign up for an account in your Bookstore, and test out the app!  Test to make sure the email verification works,  and run through some of the use cases from before like search, cart, ordering, and best sellers.
+Since this is a completely new instance of the application, your username and password that you used before in Step 1 won't work.  Sign up for an account in your Bookstore, and test out the app!  Test to make sure the email verification works,  and run through some of the use cases from before like search, cart, ordering, and best sellers.  
+*Note: If you are having issues with the sign up page using Firefox, try using Chrome.*
 
 
 ### Section 2: Explore the backend
