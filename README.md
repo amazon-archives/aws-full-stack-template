@@ -38,9 +38,9 @@ This sample code is made available under a modified MIT license. See the LICENSE
 
 ## Overview
 
-The goal of the AWS Full-Stack Template is to provide a fully-functional web application that helps users accelerate building apps on AWS by providing an out-of-the-box template.  This template is production-ready and pre-loaded with best practices. Applications today have an increasing number of building blocks and infrastructure components, and AWS Full-Stack Template will help educate professionals and students alike to design software in a modern cloud computing world. With AWS Full-Stack Template, developers can create a cohesive, production-ready application on the cloud in minutes, allowing them to focus on building the pieces that matter and add value.
+The goal of AWS Full-Stack Template is to provide a fully-functional web application that helps users accelerate building apps on AWS by providing an out-of-the-box template.  This template is production-ready and pre-loaded with best practices. Applications today have an increasing number of building blocks and infrastructure components, and AWS Full-Stack Template will help educate professionals and students alike to design software in a modern cloud computing world. With AWS Full-Stack Template, developers can create a cohesive, production-ready application on the cloud in minutes, allowing them to focus on building the pieces that matter and add value.
 
-The provided CloudFormation template automates the entire creation and deployment of the AWS Full-Stack Template.  The template includes the following components:
+The provided CloudFormation template automates the entire creation and deployment of AWS Full-Stack Template.  The template includes the following components:
 
 **Database components**
 
@@ -58,7 +58,7 @@ The provided CloudFormation template automates the entire creation and deploymen
 
 You can choose to customize the template to create your own goals app, modify it to make a different type of simple notes or to-do application, or add onto it to make a completely different type of web application.  
 
-Users can build on top of AWS Full-Stack Template to create any application they envision, whether a travel booking tool, a blog, or another web app. The **AWS Bookstore Demo App** (available at [https://github.com/aws-samples/aws-bookstore-demo-app](https://github.com/aws-samples/aws-bookstore-demo-app)) is just one full-fledged example of what you might create using AWS Full-Stack Template. 
+Users can build on top of AWS Full-Stack Template to create any application they envision, whether a travel booking tool, a blog, or another web app. **[AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app)** is just one full-fledged example of what you might create using AWS Full-Stack Template. 
 
 Once you've set up AWS Full-Stack Template, check out how you can build on top of it with [Extensions](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions)
 
@@ -76,11 +76,11 @@ Once you've set up AWS Full-Stack Template, check out how you can build on top o
 
 ### Getting started
 
-To get the AWS Full-Stack Template up and running in your own AWS account, follow these steps (if you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)):
+To get AWS Full-Stack Template up and running in your own AWS account, follow these steps (if you do not have an AWS account, please see [How do I create and activate a new Amazon Web Services account?](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)):
 
 1. Log into the [AWS console](https://console.aws.amazon.com/) if you are not already.  
 *Note: If you are logged in as an IAM user, ensure your account has permissions to create and manage the necessary resources and components for this application.* 
-2. Choose **Launch Stack**  for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Full-Stack Template is supported in the following regions:
+2. Choose one of the **Launch Stack** buttons below for your desired AWS region to open the AWS CloudFormation console and create a new stack. AWS Full-Stack Template is supported in the following regions:
 
 Region name | Region code | Launch
 --- | --- | ---
@@ -96,8 +96,9 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
     3. Provide a project name (must be lowercase, letters only, and **under ten characters**).  This is used when naming your resources, e.g. tables, etc.
     4. After reviewing, check the blue box for creating IAM resources.
 4. Choose **Create stack**.  This will take ~15 minutes to complete.
+5. Once the CloudFormation deployment is complete, check the status of the build in the [CodePipeline](https://console.aws.amazon.com/codesuite/codepipeline/pipelines) console and ensure it has succeeded.
 5. Sign into your application 
-    1. The output of the CloudFormation stack creation will provide a CloudFront URL (in the *Outputs* section of your stack details page).  Copy and paste the CloudFront URL into your browser.
+    1. The output of the CloudFormation stack creation will provide a CloudFront URL (in the **Outputs** table of the stack details page).  Click the link or copy and paste the CloudFront URL into your browser.
     2. You can sign into your application by registering an email address and a password.  Choose **Sign up to explore the demo** to register.  The registration/login experience is run in your AWS account, and the supplied credentials are stored in Amazon Cognito.  
 *Note: given that this is a demo application, we highly suggest that you do not use an email and password combination that you use for other purposes (such as an AWS account, email, or e-commerce site).*
     3. Once you provide your credentials, you will receive a verification code at the email address you provided. Upon entering this verification code, you will be signed into the application.
@@ -168,7 +169,7 @@ The code is hosted in AWS CodeCommit. AWS CodePipeline builds the web applicatio
 
 ### Amazon DynamoDB
 
-The backend of the AWS Full-Stack Template leverages Amazon DynamoDB to enable dynamic scaling and the ability to add features as we improve our goals application. The application creates one table in DynamoDB: *Goals.*  DynamoDB's primary key consists of a partition (hash) key and an optional sort (range) key. The primary key (partition and sort key together) must be unique.
+The backend of AWS Full-Stack Template leverages Amazon DynamoDB to enable dynamic scaling and the ability to add features as we improve our goals application. The application creates one table in DynamoDB; the table name will match the "ProjectName" you used when creating the stack in CloudFormation. DynamoDB's primary key consists of a partition (hash) key and an optional sort (range) key. The primary key (partition and sort key together) must be unique.
 
 **Goals Table**
 
@@ -383,7 +384,7 @@ Your done! Any future updates you make to your repository get pushed to your cod
 
 ## Considerations for demo purposes
 
-1. Web assets (pages, images, etc.) are pulled from a public S3 bucket via the CloudFormation template to create the frontend for the AWS Full-Stack Template.  When building your own web application (or customizing this one), you will likely pull from your own S3 buckets.  If you customize the lambda functions, you will want to store these separately, as well.
+1. Web assets (pages, images, etc.) are pulled from a public S3 bucket via the CloudFormation template to create the frontend for AWS Full-Stack Template.  When building your own web application (or customizing this one), you will likely pull from your own S3 buckets.  If you customize the lambda functions, you will want to store these separately, as well.
 
 ## Known limitations
 
@@ -394,11 +395,11 @@ Your done! Any future updates you make to your repository get pushed to your cod
 
 ## Additions, forks, and contributions
 
-We are excited that you are interested in using the AWS Full-Stack Template!  This is a great place to start if you are just beginning with AWS and want to get a functional application up and running.  It is equally useful if you are looking for a sample full-stack application to fork off of and build your own custom application.  We encourage developer participation via contributions and suggested additions.  Of course you are welcome to create your own version!
+We are excited that you are interested in using AWS Full-Stack Template!  This is a great place to start if you are just beginning with AWS and want to get a functional application up and running.  It is equally useful if you are looking for a sample full-stack application to fork off of and build your own custom application.  We encourage developer participation via contributions and suggested additions.  Of course you are welcome to create your own version!
 
 Please see the [contributing guidelines](CONTRIBUTING.md) for more information.
 
-For just one example of how you can build on top of this, check out **AWS Bookstore Demo App** (available at [https://github.com/aws-samples/aws-bookstore-demo-app](https://github.com/aws-samples/aws-bookstore-demo-app)), which was built on top of AWS Full Stack Template.
+For just one example of how you can build on top of this, check out **[AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app)** which was built on top of AWS Full-Stack Template.
 
 ## Extensions
 
@@ -408,4 +409,4 @@ Want to contribute an extension?  Leave us a comment or submit a PR!
 
 ## Questions and contact
 
-For questions on the AWS Full-Stack Template, or to contact the team, please leave a comment on GitHub.
+For questions on AWS Full-Stack Template, or to contact the team, please leave a comment on GitHub.
