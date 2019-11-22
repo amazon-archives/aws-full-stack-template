@@ -60,7 +60,7 @@ You can choose to customize the template to create your own goals app, modify it
 
 Users can build on top of AWS Full-Stack Template to create any application they envision, whether a travel booking tool, a blog, or another web app. **[AWS Bookstore Demo App](https://github.com/aws-samples/aws-bookstore-demo-app)** is just one full-fledged example of what you might create using AWS Full-Stack Template. 
 
-Once you've set up AWS Full-Stack Template, check out how you can build on top of it with [Extensions](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions)
+Once you've set up AWS Full-Stack Template, check out how you can build on top of it with [Extensions](https://github.com/awslabs/aws-full-stack-template/tree/master/extensions).
 
 &nbsp;
 
