@@ -133,10 +133,13 @@ By this point, you should have a pretty good feel for the different architectura
 
 #### Step 1: Add a "Last updated" or "Last modified" parameter
 
-First, you'll need to modify the "UpdateGoal" Lambda function to add the current time for the update, which will pass this information to DynamoDB.  To do this, open the [AWS Lambda console](https://console.aws.amazon.com/lambda) and search for "goal" which should return a list of the functions created in your account by the CloudFormation template.  Choose the one that ends in "UpdateGoal" and scroll down to the "Function code" card.
+First, you'll need to modify the "UpdateGoal" Lambda function to add the current time for the update, which will pass this information to DynamoDB.  To do this, open the [AWS Lambda console](https://console.aws.amazon.com/lambda) and search for "goal" which should return a list of the functions created in your account by the CloudFormation template.  Choose the one that ends in "UpdateGoal," scroll down to the "Function code" card, and make your modifications.  For extra credit, try to make the changes without looking at the answers provided in the expandable section below!
 
+<details>
+  <summary>Expand to see code (answers!)</summary>
+ 
+  
 Add a parameter to "UpdateExpression" and a new line under "ExpressionAttributeValues" so it looks like this:
-
 ```js
 UpdateExpression: "SET title = :title, content = :content, lastUpdated = :lastUpdated",
 ExpressionAttributeValues: {
@@ -146,14 +149,22 @@ ExpressionAttributeValues: {
     },
 ```
 
-Note we have added the "lastUpdated" parameter in two places (don't forget the comma after the "null").  Save your function.  Since the function hasn't been used yet, there won't be any "lastUpdated" record created until the function is called, so go modify one of your goals in the app.  You can change the title or description (up to you), and choose "Update goal."  
+Note we have added the "lastUpdated" parameter in two places.  Also, don't forget the comma after the "null". 
+
+</details>
+
+Save your function.  Since the function hasn't been used yet, there won't be any "lastUpdated" record created until the function is called, so go modify one of your goals in the app.  You can change the title or description (up to you), and choose "Update goal."  
 
 Next, let's go to DynamoDB to verify the new "lastUpdated" information is passed through.  Open the DynamoDB console and find the table that corresponds to this goals project (the table name will match the "ProjectName" you used when creating the stack in CloudFormation).  Open the item corresponding to the goal you updated, and you should now see the "lastUpdated" information in the item. 
 
 #### Step 2: Add a "Last updated" column to the goals list page
 
-Now that you have a snazzy new parameter to track when your goal was last updated, the next step is to add this information to the goals list page.  Here's a big hint: you only need to change one file. To get started, open the CodeCommit console, choose "Repositories" and then "Code" from the left navigation.  Navigate to /src/modules/signup/Home.tsx.  Choose "Edit" in the upper-right.  
+Now that you have a snazzy new parameter to track when your goal was last updated, the next step is to add this information to the goals list page.  Here's a big hint: you only need to change one file. To get started, open the CodeCommit console, choose "Repositories" and then "Code" from the left navigation.  Navigate to /src/modules/signup/Home.tsx.  Choose "Edit" in the upper-right and make your modifications.  For extra credit, try to make the changes without looking at the answers provided in the expandable section below!
 
+<details>
+  <summary>Expand to see code (answers!)</summary>
+ 
+ 
 Add new lines under "interface Goal," "return goalsList," and "Table" so it looks like this:
 ```js
 interface Goal { 
@@ -185,6 +196,9 @@ interface Goal {
               <th>Date modified</th>  //<--This line!
             </tr> 
 ```
+
+</details>
+
 Make your changes and then choose "Commit changes" at the bottom.
 
 Next, go to the pipeline that was set up for you in CodePipeline (choose "Pipeline" from the left navigation, then choose "Pipelines").  Open the pipeline associated with your goals app project, and choose "Release change."
