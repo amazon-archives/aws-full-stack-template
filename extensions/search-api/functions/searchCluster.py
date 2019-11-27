@@ -21,7 +21,7 @@ def handler(event, context):
         "query": {
           "multi_match": {
                 "query": event["queryStringParameters"]["q"],
-                "fields": ["title.S", "content.S"] # TODO: Fill with columns to search on. Format: [column].[type of DynamoDB column]
+                "fields": ["title.S"] # TODO: Fill with columns to search on. Format: [column].[type of DynamoDB column]
             }
         }
     }
