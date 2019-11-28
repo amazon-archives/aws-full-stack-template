@@ -276,7 +276,18 @@ to:
     "q": "title of your goal"
   },
 ```
-where "title of your goal" is the goal title you made a note of earlier (or perhaps one word of your goal title).  This is simulating the string that you might put into a search bar.
+
+and 
+
+```js
+"cognitoIdentityId": null,
+```
+to:
+```js
+"cognitoIdentityId": "your Cognito Identity ID",
+```
+
+Where "title of your goal" is the goal title you made a note of earlier (or perhaps one word of your goal title), and "your Cognito Identity ID" is the userID.  This is simulating the string that you might put into a search bar, and filtering down to goals created or updated by the logged-in user.
 
 Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.  
 
