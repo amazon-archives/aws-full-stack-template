@@ -86,9 +86,8 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 3. Continue through the CloudFormation wizard steps
     1. Name your stack, e.g. MyGoalsApp
-    2. Name your S3 bucket (must be lowercase and has to unique across all existing bucket names in Amazon S3).  See [bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/dev//BucketRestrictions.html#bucketnamingrules).
-    3. Provide a project name (must be lowercase, letters only, and **under twelve (12) characters**).  This is used when naming your resources, e.g. tables, etc.
-    4. After reviewing, check the blue box for creating IAM resources.
+    2. Provide a project name, e.g. goalsapp (must be lowercase, letters only, and **under twelve (12) characters**).  This is used when naming your resources, e.g. tables, etc.
+    3. After reviewing, check the blue box for creating IAM resources.
 4. Choose **Create stack**.  This will take ~15 minutes to complete.
 
 #### Step 3: Review architecture
