@@ -14,14 +14,22 @@ type = "lambda-type"
 url = "https://" + os.environ["ESENDPOINT"] + "/_search" # ElasticSearch cluster URL
 
 def handler(event, context):
-    # event.requestContext.identity.cognitoIdentityId,
     # Put the user query into the query DSL for more accurate search results.
     query = {
         "size": 25,
         "query": {
-          "multi_match": {
-                "query": event["queryStringParameters"]["q"],
-                "fields": ["title.S"] # TODO: Fill with columns to search on. Format: [column].[type of DynamoDB column]
+            "bool" : {
+                "must": {
+                    "match" : {
+                        "userId.S" : event["requestContext"]["identity"]["cognitoIdentityId"]
+                    }
+                },
+                "must": {
+                    "multi_match" : {
+                        "query" : event["queryStringParameters"]["q"],
+                        "fields" : ["title.S"] # TODO: Fill with columns to search on. Format: [column name].[column type]
+                    }
+                }
             }
         }
     }
