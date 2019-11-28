@@ -1,18 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   ProjectName:
-    Description: Name of the project (lowercase and under twelve characters)
+    Description: Used as a prefix for project resources.  Can be up to 12 characters, lowercase letters (a-z) only.
     Type: String
-    AllowedPattern: '^[a-z]{0,12}$'
-    ConstraintDescription: Must be lowercase and under twelve characters
-  AssetsBucketName:
-    Type: String
-    Description: 'Name of assets S3 bucket to create (lowercase, numbers or - only, S3 bucket names are globally unique)'
-    AllowedPattern: '^[a-z0-9-]{3,53}$'
-    ConstraintDescription: 'Must be between 3 and 53 characters (lowercase, numbers or -)'
-  SeedRepository:
-    Type: String
-    Default: 'https://s3.amazonaws.com/aws-fullstack-template/goals-webapp.zip'
+    Default: goalsapp
+    AllowedPattern: "^[a-z]{0,12}"
+    ConstraintDescription: The ProjectName can be up to 12 characters, lowercase letters (a-z) only.
 Conditions:
   IADRegion: !Equals [!Ref "AWS::Region", "us-east-1"]
 Mappings:
@@ -29,8 +22,9 @@ Mappings:
     eu-west-1:
       Bucket: aws-fullstack-template-eu-west-1
       SeederFunctionBucket: fsd-aws-wildrydes-eu-west-1
-
   Constants:
+    AppKeys:
+      SeedRepository: https://s3.amazonaws.com/aws-fullstack-template/goals-webapp.zip
     S3Keys:
       ListGoalsCode: functions/ListGoals.zip
       CreateGoalCode: functions/CreateGoal.zip
@@ -39,11 +33,12 @@ Mappings:
       GetGoalCode: functions/GetGoal.zip
       UpdateConfigCode: functions/UpdateConfig.zip
       SeederFunctionCode: aws-serverless-codecommit-seeder.zip
+      PythonLambdaLayer: functions/PythonLambdaLayer.zip
+      DeleteBucketsCode: functions/DeleteBuckets.zip
 Resources:
   DynamoDbRole:
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !Sub '${ProjectName}-DynamoDbLambda'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -709,7 +704,6 @@ Resources:
   AssetsBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: !Ref AssetsBucketName
       AccessControl: Private
       MetricsConfigurations:
         - Id: EntireBucket
@@ -721,12 +715,12 @@ Resources:
   AssetsBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
-      Bucket: !Ref AssetsBucketName
+      Bucket: !Ref AssetsBucket
       PolicyDocument:
         Statement:
           - Action: 's3:GetObject'
             Effect: Allow
-            Resource: !Sub 'arn:aws:s3:::${AssetsBucketName}/*'
+            Resource: !Sub 'arn:aws:s3:::${AssetsBucket}/*'
             Principal:
               AWS: !Sub >-
                 arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity
@@ -740,7 +734,7 @@ Resources:
     Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: !Sub 'OriginAccessIdentity for ${AssetsBucketName}'
+        Comment: !Sub 'OriginAccessIdentity for ${AssetsBucket}'
     Metadata:
       'AWS::CloudFormation::Designer':
         id: f391801b-d255-40b5-be40-725ad2e93a22
@@ -751,12 +745,12 @@ Resources:
     Properties:
       DistributionConfig:
         Enabled: true
-        Comment: !Sub 'CDN for ${AssetsBucketName}'
+        Comment: !Sub 'CDN for ${AssetsBucket}'
         DefaultRootObject: index.html
         Origins:
           - DomainName: !Join
               - ''
-              - - !Sub '${AssetsBucketName}.s3'
+              - - !Sub '${AssetsBucket}.s3'
                 - !If [IADRegion, '', !Sub '-${AWS::Region}']
                 - '.amazonaws.com'
             Id: S3
@@ -775,7 +769,6 @@ Resources:
     Description: Creating service role in IAM for AWS CodeBuild
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !Sub '${ProjectName}-codebuild-role'
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
@@ -820,7 +813,6 @@ Resources:
     Description: Creating service role in IAM for AWS CodePipeline
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !Sub '${ProjectName}-CodePipeline-Role'
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
@@ -871,7 +863,6 @@ Resources:
   PipelineArtifactsBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: !Sub '${AssetsBucketName}-pipeline'
       AccessControl: Private
     Metadata:
       'AWS::CloudFormation::Designer':
@@ -912,7 +903,7 @@ Resources:
             post_build:
               commands:
                 - echo Uploading to AssetsBucket 
-                - aws s3 cp --recursive ./build s3://${AssetsBucketName}/ 
+                - aws s3 cp --recursive ./build s3://${AssetsBucket}/ 
                 - aws s3 cp --cache-control="max-age=0, no-cache, no-store, must-revalidate" ./build/service-worker.js s3://${AssetsBucket}/
                 - aws s3 cp --cache-control="max-age=0, no-cache, no-store, must-revalidate" ./build/index.html s3://${AssetsBucket}/
                 - aws cloudfront create-invalidation --distribution-id ${AssetsCDN} --paths /index.html /service-worker.js
@@ -936,7 +927,7 @@ Resources:
         - CodePipelineRole
         - Arn
       ArtifactStore:
-        Location: !Sub '${AssetsBucketName}-pipeline'
+        Location: !Ref PipelineArtifactsBucket
         Type: S3
       Stages:
         - Name: Source
@@ -1082,7 +1073,7 @@ Resources:
         'Fn::GetAtt':
           - SeederFunction
           - Arn
-      sourceUrl: !Ref SeedRepository
+      sourceUrl: !FindInMap [Constants, AppKeys, SeedRepository]
       targetRepositoryName: !Sub '${ProjectName}-WebAssets'
       targetRepositoryRegion: '${AWS::Region}'
     Type: 'Custom::RepositorySeeder'
@@ -1098,6 +1089,81 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 63b08124-fccb-4874-ab13-ce6cfe6ce885
+# ---------- CLEANUP STACK ---------
+  BucketCleanupRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: BucketCleanupPolicy
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - 's3:List*'
+                  - 's3:DeleteObject'
+                Effect: Allow
+                Resource:
+                  - !GetAtt AssetsBucket.Arn
+                  - !GetAtt PipelineArtifactsBucket.Arn
+                  - !Join [ "", [ !GetAtt AssetsBucket.Arn , "/*" ]]
+                  - !Join [ "", [ !GetAtt PipelineArtifactsBucket.Arn , "/*" ]]
+            Version: 2012-10-17
+  PythonLambdaLayer:
+    Type: "AWS::Lambda::LayerVersion"
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.6
+      Content:
+        S3Bucket: !FindInMap
+          - S3Buckets
+          - !Ref 'AWS::Region'
+          - Bucket
+        S3Key: !FindInMap
+          - Constants
+          - S3Keys
+          - PythonLambdaLayer 
+  BucketCleanupFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-BucketCleanup'
+      Description: Cleanup S3 buckets when deleting stack
+      Handler: index.handler
+      MemorySize: 256
+      Role: !GetAtt BucketCleanupRole.Arn
+      Runtime: python3.7
+      Timeout: 30
+      Layers:
+        - !Ref PythonLambdaLayer
+      Code:
+        S3Bucket: !FindInMap 
+                    - S3Buckets
+                    - !Ref 'AWS::Region'
+                    - Bucket
+        S3Key: !FindInMap 
+                 - Constants
+                 - S3Keys
+                 - DeleteBucketsCode
+  DeleteBucketsObjects:
+    Type: 'Custom::CustomResource'
+    Properties:
+      ServiceToken: !GetAtt BucketCleanupFunction.Arn
+      BucketNames:
+        - !Ref AssetsBucket
+        - !Ref PipelineArtifactsBucket
+      DependsOn:
+        - BucketCleanupFunction
+        - BucketCleanupRole
 Outputs:
   CodeRepository:
     Description: Code repository for the web application.
