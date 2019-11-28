@@ -92,9 +92,8 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 3. Continue through the CloudFormation wizard steps
     1. Name your stack, e.g. MyGoalsApp
-    2. Name your S3 bucket (must be lowercase and has to be unique across all existing bucket names in Amazon S3).  See [bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/dev//BucketRestrictions.html#bucketnamingrules).
-    3. Provide a project name (must be lowercase, letters only, and **under twelve (12)twelve (12) characters**).  This is used when naming your resources, e.g. tables, etc.
-    4. After reviewing, check the blue box for creating IAM resources.
+    2. Provide a project name, e.g. goalsapp (must be lowercase, letters only, and **under twelve (12) characters**).  This is used when naming your resources, e.g. tables, etc.
+    3. After reviewing, check the blue box for creating IAM resources.
 4. Choose **Create stack**.  This will take ~15 minutes to complete.
 5. Once the CloudFormation deployment is complete, check the status of the build in the [CodePipeline](https://console.aws.amazon.com/codesuite/codepipeline/pipelines) console and ensure it has succeeded.
 6. Sign into your application 
@@ -109,10 +108,7 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 To tear down your application and remove all resources associated with AWS Full-Stack Template, follow these steps:
 
-1. Log into the [Amazon S3 Console](https://console.aws.amazon.com/s3) and  delete the buckets created for the demo app.  
-   - There should be two buckets created for AWS Full-Stack Template.  The buckets will be titled "X" and "X-pipeline", where "X" is the name you specified in the CloudFormation wizard under the AssetsBucketName parameter.  
-   - *Note: Please be **very careful** to only delete the buckets associated with this app that you are absolutely sure you want to delete.*
-2. Log into the AWS CloudFormation Console and find the stack you created for the demo app
+1. Log into the AWS CloudFormation Console and find the stack you created for the demo app
 3. Delete the stack
 
 *Remember to shut down/remove all related resources once you are finished to avoid ongoing charges to your AWS account.*
