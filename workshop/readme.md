@@ -290,7 +290,28 @@ Where "title of your goal" is the goal title you made a note of earlier (or perh
 
 Choose "Create" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.  
 
-#### Step 3: Add a search bar to the goals app *(optional)*
+#### Step 3: Modify the search capability 
+
+With the search capability as-is, you are currently able to search by the goal title of one of your goals. Now we're going to add the ability to search by the goal description, as well.  
+
+Open the AWS Lambda console to the same Lambda function from Step 2 (the one titled "yourextensionprojectname-Search").  Scroll down to the "Function code" card and make your modifications (hint: look for the big "# TODO" code comment).  For extra credit, try to make the changes without looking at the answers provided in the expandable section below!
+
+<details>
+  <summary>Expand to see code (answers!)</summary>
+ 
+  
+Add a parameter to the "fields" attribute (Line 30) under the "query" definition so it looks like the below.  You can remove the code comment if you like.
+```js
+              "fields" : [“title.S”, “content.S"]
+```
+
+</details>
+
+Save your function.  If you have not already created a new goal or updated a goal (i.e. in Step 2), go do this in the app now.
+
+Next, let's verify that we can now search by a goal description.  Using the same dropdown you used to create your test event in Step 2, choose "Configure test events" again, and change the query from one of your goal titles to match one of your goal descriptions. Choose "Save" at the bottom of the window.  Next, choose "Test" at the top of the window and verify that you see your goal information returned.  
+
+#### Step 4: Add a search bar to the goals app *(optional)*
 
 If you would like, you can go even further by integrating the search functionality into the frontend application.  Feel free to explore how AWS Bookstore Demo App did this, or experiment!
 
