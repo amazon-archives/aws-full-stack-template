@@ -4,7 +4,7 @@ Parameters:
     Description: Used as a prefix for project resources.  Can be up to 12 characters, lowercase letters (a-z) only.
     Type: String
     Default: goalsapp
-    AllowedPattern: "^[a-z]{0,12}"
+    AllowedPattern: "^[a-z]{1,12}"
     ConstraintDescription: The ProjectName can be up to 12 characters, lowercase letters (a-z) only.
 Conditions:
   IADRegion: !Equals [!Ref "AWS::Region", "us-east-1"]
