@@ -138,7 +138,7 @@ First, you'll need to modify the "UpdateGoal" Lambda function to add the current
   <summary>Expand to see code (answers!)</summary>
  
   
-Add a parameter to "UpdateExpression" and a new line under "ExpressionAttributeValues" so it looks like this:
+Add a parameter at the end of the "UpdateExpression" line and a new line under "ExpressionAttributeValues" so it looks like this:
 ```js
 UpdateExpression: "SET title = :title, content = :content, lastUpdated = :lastUpdated",
 ExpressionAttributeValues: {
@@ -148,7 +148,7 @@ ExpressionAttributeValues: {
     },
 ```
 
-Note we have added the "lastUpdated" parameter in two places.  Also, don't forget the comma after the "null". 
+Note we have added the "lastUpdated" parameter in **two** places.  Also, don't forget the comma after the "null". 
 
 </details>
 
