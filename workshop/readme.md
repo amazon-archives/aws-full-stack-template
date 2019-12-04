@@ -87,7 +87,8 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 3. Continue through the CloudFormation wizard steps
     1. Name your stack, e.g. MyGoalsApp
     2. Provide a project name, e.g. goalsapp (must be lowercase, letters only, and **under twelve (12) characters**).  This is used when naming your resources, e.g. tables, etc.
-    3. After reviewing, check the blue box for creating IAM resources.
+    3. Choose next, then next.
+    4. On the last review page, check the blue box for creating IAM resources.
 4. Choose **Create stack**.  This will take ~15 minutes to complete.
 
 #### Step 3: Review architecture
@@ -108,7 +109,7 @@ Now that the application is up and running, let's open the hood and play around 
 
 #### Step 1: Change the details for one of your goals directly in DynamoDB
 
-Let's try changing one of the goals directly in DynamoDB.  Open the DynamoDB console, find the table that corresponds to this project (the table name will match the "ProjectName" you used when creating the stack in CloudFormation), and choose one of the goal items to modify.  Change either the "title" string or the "content" string (which maps to the "Description" field in the app), and save your change in DynamoDB.  Return to the goals app, and refresh the page.  You should see your change reflected in the list.  
+Let's try changing one of the goals directly in DynamoDB.  Open the [DynamoDB](https://console.aws.amazon.com/dynamodb) console, find the table that corresponds to this project (the table name will match the "ProjectName" you used when creating the stack in CloudFormation), and choose one of the goal items to modify.  Change either the "title" string or the "content" string (which maps to the "Description" field in the app), and save your change in DynamoDB.  Return to the goals app, and refresh the page.  You should see your change reflected in the list.  
 
 #### Step 2: Delete a user in Cognito
 
@@ -249,7 +250,8 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
     1. Name your stack, e.g. SearchAPI
     2. Enter the DynamoDB table to integrate with. (You can find this in the CloudFormation console in the Resources tab of your deployed AWS Full-Stack Template.  In the TGoals row, use the value in the **Physical ID** column.)
     3. Specify the API Gateway ID to integrate with (You can find this in the CloudFormation console in the Resources tab of your deployed AWS Full-Stack Template.  In the AppApi row, use the value in the **Physical ID** column.)
-    4. After reviewing, check the blue box for creating IAM resources. 
+    4. Choose next, then next.
+    5. On the last review page, check the blue box for creating IAM resources.
 4. Choose Create stack. This will take ~15 minutes to complete. 
 
 #### Step 2: Play with the search capability
@@ -386,9 +388,9 @@ EU (Frankfurt) |	eu-central-1 | [![Launch Stack](https://cdn.rawgit.com/buildkit
 
 3. Continue through the CloudFormation wizard steps
     1. Name your stack, e.g. MyBookstore
-    2. Name your S3 bucket (must be lowercase and has to unique across all existing bucket names in Amazon S3).  See [bucket naming rules](https://docs.aws.amazon.com/AmazonS3/latest/dev//BucketRestrictions.html#bucketnamingrules).
-    3. Provide a project name (must be lowercase, letters only, and **under twelve (12) characters**).  This is used when naming your resources, e.g. tables, search domain, etc.
-    4. After reviewing, check the blue box for creating IAM resources.
+    2. Provide a project name (must be lowercase, letters only, and **under twelve (12) characters**).  This is used when naming your resources, e.g. tables, search domain, etc.
+    3. Choose next, then next.
+    4. On the last review page, check the blue box for creating IAM resources.
 4. Choose **Create stack**.  This will take ~20 minutes to complete.
 
 #### Step 3: Review architecture
