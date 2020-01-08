@@ -40,7 +40,7 @@ Resources:
         - ''
         - - !If [IsSlack, 'slack', 'chime']
           - '.handler'
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Role: !GetAtt 
         - WebhookRole
         - Arn
@@ -129,7 +129,7 @@ Resources:
       FunctionName: !Sub '${CloudwatchAlarm}-FunctionSetupAlert'
       Description: Setup subscription to alarm with SNS and trigger Send to Alert Lambda function. 
       Handler: index.handler
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Role: !GetAtt 
         - SetupAlertRole
         - Arn
