@@ -95,7 +95,7 @@ Resources:
       Description: Get list of goals for userId
       Handler: index.handler
       MemorySize: 256
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Role: !GetAtt 
         - DynamoDbRole
         - Arn
@@ -119,7 +119,7 @@ Resources:
       Description: Create goal for user id
       Handler: index.handler
       MemorySize: 256
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Role: !GetAtt 
         - DynamoDbRole
         - Arn
@@ -143,7 +143,7 @@ Resources:
       Description: Delete goal for user id
       Handler: index.handler
       MemorySize: 256
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Role: !GetAtt 
         - DynamoDbRole
         - Arn
@@ -167,7 +167,7 @@ Resources:
       Description: Update goal for user id
       Handler: index.handler
       MemorySize: 256
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Role: !GetAtt 
         - DynamoDbRole
         - Arn
@@ -191,7 +191,7 @@ Resources:
       Description: Get goal for user id
       Handler: index.handler
       MemorySize: 256
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Role: !GetAtt 
         - DynamoDbRole
         - Arn
@@ -892,7 +892,7 @@ Resources:
           phases:
             install:
               runtime-versions:
-                nodejs: 8
+                nodejs: 10
             pre_build:
               commands:
                 - echo Installing NPM dependencies...
@@ -1007,7 +1007,7 @@ Resources:
         'Fn::GetAtt':
           - SeederRole
           - Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 300
       Environment:
         Variables:
