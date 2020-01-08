@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const uuid = require('uuid');
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -19,7 +18,7 @@ exports.handler = (event, context, callback) => {
     // - 'createdAt': current Unix timestamp
     Item: {
       userId: event.requestContext.identity.cognitoIdentityId,
-      goalId: uuid.v1(),
+      goalId: context.awsRequestId,
       title: data.title,
       content: data.content,
       createdAt: Date.now()
