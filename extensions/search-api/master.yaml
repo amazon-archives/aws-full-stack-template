@@ -49,7 +49,7 @@ Resources:
       FunctionName: !Sub '${DynamoDBTable}-EnableStreams'
       Description: Enable streams for DynamoDB table
       Handler: index.handler
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Role: !GetAtt 
         - DynamoDBRole
         - Arn
@@ -143,7 +143,7 @@ Resources:
         'Fn::GetAtt':
           - RoleForCreateESRoleFunction
           - Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 300
     Type: 'AWS::Lambda::Function'
   ESRoleCreator:
@@ -438,7 +438,7 @@ Resources:
       FunctionName: !Sub '${DynamoDBTable}-APIGatewayInfo'
       Description: Retrieve info about API Gateway resource
       Handler: index.handler
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Role: !GetAtt 
         - GetAPIGatewayInfoRole
         - Arn
